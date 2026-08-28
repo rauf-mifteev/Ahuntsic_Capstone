@@ -253,7 +253,7 @@ Aucun lien avec un dossier médical, une pharmacie ou un professionnel de la san
 
 ### 2.3.6 Maquettes
 
-[À INSÉRER — Écrans : inscription et connexion, tableau de bord du jour, configuration des rangées, liste des médicaments, résultat d'une prise avec ses trois états, historique, écran de démonstration.]
+[B8 · Maquettes](B8-maquettes.md)
 
 L'écran de résultat doit montrer les trois cas : prise confirmée, case encore pleine, résultat ambigu.
 
