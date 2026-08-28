@@ -1,6 +1,6 @@
 # Projet de gestion
 
-**Jira** — [À REMPLIR : lien du projet]
+##**Jira**##
 
 L'enseignant est invité.
 
