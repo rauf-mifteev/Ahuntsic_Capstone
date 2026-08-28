@@ -17,12 +17,3 @@ Cette semaine, rien n'est déployé. La mise en ligne fait partie du sprint 1.
 ## Communication
 
 Teams pour les échanges quotidiens et les blocages. Léa pour les remises officielles.
-
-## Vérification des accès
-
-Avant chaque remise, on ouvre chaque lien depuis un compte extérieur. Un lien qui fonctionne parce qu'on est connecté ne prouve rien.
-
-- [ ] Dépôt GitHub accessible à l'enseignant
-- [ ] Projet Jira accessible à l'enseignant
-- [ ] Dossier Drive accessible à l'enseignant
-- [ ] Dossier `docs/` lisible depuis l'interface web de GitHub
