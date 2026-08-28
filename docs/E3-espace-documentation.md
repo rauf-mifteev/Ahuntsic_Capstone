@@ -2,7 +2,7 @@
 
 **GitHub, dossier `docs/`** — c'est la version officielle. Un fichier par livrable.
 
-**Drive de l'équipe** — [À REMPLIR : lien du dossier partagé]
+**Drive de l'équipe** — Pour des raisons de sécurité et confidentialité, le lien vers le Drive reste privé aux membres de l'équipe.
 
 Le Drive sert à travailler ensemble et à partager les brouillons. Quand un document est fini, il est converti en Markdown et déposé dans `docs/`.
 
