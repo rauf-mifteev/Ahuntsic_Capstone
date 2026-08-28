@@ -1,8 +1,6 @@
 # Dépôt de code
 
-**GitHub** — [À REMPLIR : lien du dépôt]
-
-L'enseignant est ajouté en collaborateur.
+**GitHub** — https://github.com/rauf-mifteev/Ahuntsic_Capstone
 
 Le dépôt contient le code, le README et le dossier `docs/`. Cette semaine, il ne contient aucun code applicatif : le développement commence au sprint 1.
 
