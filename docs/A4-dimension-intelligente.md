@@ -30,4 +30,4 @@ Quatre cas sont prévus. Si le score est trop bas, le système affiche « ambigu
 
 ## 3.3 Acceptation par le client
 
-[À REMPLIR APRÈS LA SÉANCE DE RAFFINEMENT — Date, décision du client, réserves, ajustements demandés.]
+
