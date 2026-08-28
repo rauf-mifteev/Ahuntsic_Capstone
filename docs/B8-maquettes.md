@@ -34,7 +34,7 @@ Liste des médicaments, formulaire d'ajout, choix du créneau et des jours.
 
 Le patient dit qu'il vient de remplir son plateau. L'écran montre ensuite les cases qui devraient contenir un médicament et qui sont vides.
 
-![Remplissage](assets/05-remplissage.png)
+<img src="assets/05-remplissage.png" width="300">
 
 ### 6. Résultat d'une prise
 
