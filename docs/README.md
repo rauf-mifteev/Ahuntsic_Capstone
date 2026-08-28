@@ -45,24 +45,4 @@ Un fichier par livrable. Le nom du fichier commence par le code du livrable.
 - **E2** — [Projet de gestion](E2-projet-gestion.md)
 - **E3** — [Espace de documentation](E3-espace-documentation.md)
 
-## Images
 
-Toutes les images vont dans le dossier `assets/`, sans les renommer. Les documents pointent déjà vers ces noms.
-
-| Fichier attendu | Utilisé par |
-|---|---|
-| `Diagramme_de_cas_d_utilisation.png` | B1 |
-| `Diagramme_de_classes.png` | B3 |
-| `Sequence_configuration_initiale.png` | B4 |
-| `Sequence_remplissage_hebdomadaire.png` | B4 |
-| `Sequence_prise_normale.png` | B4 |
-| `Sequence_prise_ambigue.png` | B4 |
-| `Sequence_prise_manquee.png` | B4 |
-| `Architecture_logicielle.png` | B5 |
-| `diagramme-Gantt.png` | A3 |
-
-Maquettes à produire, à déposer dans `assets/` sous ces noms :
-
-`01-connexion.png` · `02-tableau-de-bord.png` · `03-creneaux.png` · `04-medicaments.png` · `05-remplissage.png` · `06-resultat.png` · `07-historique.png` · `08-demonstration.png`
-
-Les sources PlantUML et Mermaid vont dans `assets/sources/`.
