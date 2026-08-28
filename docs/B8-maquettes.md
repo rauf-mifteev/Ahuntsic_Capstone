@@ -10,6 +10,7 @@ Les maquettes reprennent celles du dossier précédent, mises à jour selon le p
 
 Courriel et mot de passe. Message d'erreur qui ne dit pas quel champ est fautif.
 
+<img src="assets/01-connexion.png" width="300">
 ![Inscription et connexion](assets/01-connexion.png)
 
 ### 2. Tableau de bord du jour
