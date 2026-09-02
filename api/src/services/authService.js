@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const env = require('../config/env');
 const ApiError = require('../utils/ApiError');
 const utilisateurRepository = require('../repositories/utilisateurRepository');
+const dispositifService = require('./dispositifService');
 
 const TOURS_DE_HACHAGE = 12;
 
@@ -37,6 +38,10 @@ async function inscrire({ courriel, motDePasse }) {
 
   const motDePasseHache = await bcrypt.hash(motDePasse, TOURS_DE_HACHAGE);
   const utilisateur = await utilisateurRepository.creer({ courriel, motDePasseHache });
+
+  // Chaque compte a un seul dispositif (RG-09), créé "en attente" dès
+  // l'inscription : voir la note de conception dans models/Dispositif.js.
+  await dispositifService.creerParDefaut(utilisateur.id ?? utilisateur._id.toString());
 
   return { utilisateur, jeton: genererJeton(utilisateur) };
 }

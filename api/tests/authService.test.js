@@ -1,7 +1,13 @@
 jest.mock('../src/repositories/utilisateurRepository');
+jest.mock('../src/services/dispositifService');
 
 const utilisateurRepository = require('../src/repositories/utilisateurRepository');
+const dispositifService = require('../src/services/dispositifService');
 const authService = require('../src/services/authService');
+
+beforeEach(() => {
+  dispositifService.creerParDefaut.mockResolvedValue({ id: 'dispositif-fictif' });
+});
 
 function faireUtilisateur(overrides = {}) {
   return {
@@ -54,6 +60,15 @@ describe('authService.inscrire', () => {
 
     expect(typeof jeton).toBe('string');
     expect(jeton.split('.')).toHaveLength(3); // un JWT a 3 segments
+  });
+
+  it('crée le dispositif "en attente" du nouveau compte (RG-09)', async () => {
+    utilisateurRepository.trouverParCourrielAvecMotDePasse.mockResolvedValue(null);
+    utilisateurRepository.creer.mockResolvedValue(faireUtilisateur());
+
+    await authService.inscrire({ courriel: 'patient@example.com', motDePasse: 'motdepasse123' });
+
+    expect(dispositifService.creerParDefaut).toHaveBeenCalledWith('64f000000000000000000001');
   });
 });
 
