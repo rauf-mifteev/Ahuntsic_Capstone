@@ -1,0 +1,26 @@
+# Configuration de déploiement pour Render.com (palier gratuit) — PC-36.
+#
+# Render lit ce fichier à la racine du dépôt et provisionne automatiquement
+# le service décrit ci-dessous. Les valeurs marquées "sync: false" sont
+# saisies manuellement dans le tableau de bord Render (jamais dans le
+# dépôt) : c'est ce qui garantit qu'aucun secret ne se trouve dans le code.
+services:
+  - type: web
+    name: pilulier-api
+    runtime: node
+    plan: free
+    rootDir: api
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/sante
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CORS_ORIGIN
+        value: "*"
