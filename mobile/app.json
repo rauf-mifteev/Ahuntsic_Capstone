@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "Pilulier connecté",
+    "slug": "pilulier-connecte",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"],
+    "ios": { "supportsTablet": false, "bundleIdentifier": "com.piluliercapstone.mobile" },
+    "android": { "package": "com.piluliercapstone.mobile" },
+    "extra": {
+      "eas": {}
+    }
+  }
+}
