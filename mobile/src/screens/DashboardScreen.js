@@ -31,6 +31,11 @@ export default function DashboardScreen({ navigation }) {
           onPress={() => navigation.navigate('Creneaux')}
         />
         <PrimaryButton
+          label="Mes médicaments"
+          variant="secondary"
+          onPress={() => navigation.navigate('Medicaments')}
+        />
+        <PrimaryButton
           label="Associer mon pilulier"
           variant="secondary"
           onPress={() => navigation.navigate('Dispositif')}
