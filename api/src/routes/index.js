@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const authRoutes = require('./authRoutes');
 
 const router = Router();
 
@@ -10,5 +11,7 @@ const router = Router();
 router.get('/sante', (req, res) => {
   res.status(200).json({ etat: 'ok', horodatage: new Date().toISOString() });
 });
+
+router.use(authRoutes);
 
 module.exports = router;
