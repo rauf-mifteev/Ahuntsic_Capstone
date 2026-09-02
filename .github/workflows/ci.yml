@@ -1,0 +1,60 @@
+name: CI
+
+# Déclencheurs : chaque push et chaque pull request qui touchent l'API.
+# But (PC-35) : au moins un test automatique s'exécute à chaque envoi de
+# code, et la branche main est protégée par ce statut (voir la règle de
+# protection de branche configurée dans les paramètres GitHub, décrite
+# dans le README).
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'api/**'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'api/**'
+      - '.github/workflows/ci.yml'
+
+jobs:
+  test:
+    name: Tests API (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    defaults:
+      run:
+        working-directory: api
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: api/package-lock.json
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Analyse statique (lint)
+        run: npm run lint
+
+      - name: Exécuter les tests
+        run: npm test -- --ci --coverage
+        env:
+          NODE_ENV: test
+          JWT_SECRET: ci-test-secret
+
+      - name: Publier la couverture de tests
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: api/coverage
