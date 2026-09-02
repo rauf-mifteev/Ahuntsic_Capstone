@@ -1,14 +1,26 @@
 const createApp = require('./app');
 const env = require('./config/env');
+const { connectDatabase } = require('./config/database');
 
-// NOTE (Sprint 1, PC-35) : à ce stade l'API ne fait qu'écouter sur le port
-// configuré, pour que l'intégration continue et le premier déploiement aient
-// quelque chose à valider. La connexion à MongoDB Atlas est ajoutée dans
-// PC-36 (mise en service de la base de données et sortie de la
-// configuration hors du code).
-const app = createApp();
+/**
+ * Démarrage du processus : on se connecte d'abord à MongoDB Atlas, puis on
+ * ouvre le port HTTP seulement si la connexion a réussi. Si la base n'est
+ * pas joignable, on préfère un échec bruyant au démarrage (visible dans les
+ * journaux de l'hébergeur) plutôt qu'une API qui répond mais qui échoue sur
+ * chaque requête (R-06).
+ */
+async function start() {
+  await connectDatabase();
 
-app.listen(env.port, () => {
+  const app = createApp();
+  app.listen(env.port, () => {
+    // eslint-disable-next-line no-console
+    console.log(`API pilulier à l'écoute sur le port ${env.port} (${env.nodeEnv})`);
+  });
+}
+
+start().catch((err) => {
   // eslint-disable-next-line no-console
-  console.log(`API pilulier à l'écoute sur le port ${env.port} (${env.nodeEnv})`);
+  console.error("Échec du démarrage de l'API :", err);
+  process.exit(1);
 });
