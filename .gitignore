@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+mobile/node_modules/
+api/node_modules/
+
+# Environment
+.env
+.env.local
+api/.env
+mobile/.env
+
+# Build output
+dist/
+build/
+.expo/
+mobile/.expo/
+
+# Logs
+npm-debug.log*
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+
+# Coverage
+coverage/
