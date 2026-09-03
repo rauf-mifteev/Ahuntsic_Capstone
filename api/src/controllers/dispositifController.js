@@ -1,4 +1,6 @@
 const dispositifService = require('../services/dispositifService');
+const medicamentRepository = require('../repositories/medicamentRepository');
+const priseService = require('../services/priseService');
 const { asyncHandler } = require('../middleware/errorHandler');
 
 const obtenirMonDispositif = asyncHandler(async (req, res) => {
@@ -11,4 +13,13 @@ const mettreAJourPlagesHoraires = asyncHandler(async (req, res) => {
   res.status(200).json({ dispositif });
 });
 
-module.exports = { obtenirMonDispositif, mettreAJourPlagesHoraires };
+const associer = asyncHandler(async (req, res) => {
+  const { dispositif, nombrePrisesGenerees } = await dispositifService.associerDispositif(
+    req.utilisateurId,
+    req.body.identifiantDispositif,
+    { medicamentRepository, priseService }
+  );
+  res.status(200).json({ dispositif, nombrePrisesGenerees });
+});
+
+module.exports = { obtenirMonDispositif, mettreAJourPlagesHoraires, associer };

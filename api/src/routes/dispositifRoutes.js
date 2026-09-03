@@ -16,5 +16,6 @@ router.put(
   authentificationRequise,
   dispositifController.mettreAJourPlagesHoraires
 );
+router.post('/dispositifs/associer', authentificationRequise, dispositifController.associer);
 
 module.exports = router;

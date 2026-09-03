@@ -47,6 +47,40 @@ describe('Routes /dispositifs', () => {
     expect(res.status).toBe(200);
     expect(dispositifService.mettreAJourPlagesHoraires).toHaveBeenCalledWith('u1', plagesHoraires);
   });
+
+  it('POST /api/dispositifs/associer associe le pilulier et renvoie le nombre de prises générées', async () => {
+    dispositifService.associerDispositif.mockResolvedValue({
+      dispositif: { id: 'd1', identifiantDispositif: 'ESP32-ABC' },
+      nombrePrisesGenerees: 5,
+    });
+
+    const res = await request(app)
+      .post('/api/dispositifs/associer')
+      .set('Authorization', 'Bearer x')
+      .send({ identifiantDispositif: 'ESP32-ABC' });
+
+    expect(res.status).toBe(200);
+    expect(res.body.nombrePrisesGenerees).toBe(5);
+    expect(dispositifService.associerDispositif).toHaveBeenCalledWith(
+      'u1',
+      'ESP32-ABC',
+      expect.objectContaining({ medicamentRepository: expect.anything(), priseService: expect.anything() })
+    );
+  });
+
+  it('propage un conflit 409 si le pilulier est déjà associé (RG-09)', async () => {
+    const ApiError = require('../src/utils/ApiError');
+    dispositifService.associerDispositif.mockRejectedValue(
+      ApiError.conflict('Ce compte est déjà associé à un pilulier (RG-09)')
+    );
+
+    const res = await request(app)
+      .post('/api/dispositifs/associer')
+      .set('Authorization', 'Bearer x')
+      .send({ identifiantDispositif: 'ESP32-ABC' });
+
+    expect(res.status).toBe(409);
+  });
 });
 
 describe('Routes /medicaments', () => {
