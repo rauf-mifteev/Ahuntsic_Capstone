@@ -9,6 +9,8 @@ import { colors } from '../theme/colors';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import DashboardScreen from '../screens/DashboardScreen';
+import CreneauxScreen from '../screens/CreneauxScreen';
+import MedicamentsScreen from '../screens/MedicamentsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -39,7 +41,11 @@ export default function AppNavigator() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={optionsEcran}>
         {estConnecte ? (
-          <Stack.Screen name="TableauDeBord" component={DashboardScreen} />
+          <>
+            <Stack.Screen name="TableauDeBord" component={DashboardScreen} />
+            <Stack.Screen name="Creneaux" component={CreneauxScreen} options={{ headerShown: true, title: 'Mes moments de prise' }} />
+            <Stack.Screen name="Medicaments" component={MedicamentsScreen} options={{ headerShown: true, title: 'Mes médicaments' }} />
+          </>
         ) : (
           <>
             <Stack.Screen name="Connexion" component={LoginScreen} />
