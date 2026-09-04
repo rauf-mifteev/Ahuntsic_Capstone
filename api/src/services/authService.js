@@ -41,7 +41,21 @@ async function inscrire({ courriel, motDePasse }) {
 
   // Chaque compte a un seul dispositif (RG-09), créé "en attente" dès
   // l'inscription : voir la note de conception dans models/Dispositif.js.
-  await dispositifService.creerParDefaut(utilisateur.id ?? utilisateur._id.toString());
+  //
+  // Action compensatoire (patron Saga simplifié) : si cette étape échoue
+  // pour une raison quelconque, on supprime l'Utilisateur qui vient d'être
+  // créé plutôt que de laisser un compte "orphelin" sans dispositif — un
+  // tel compte pourrait se connecter normalement, mais échouerait dès la
+  // première action réelle (404 "Aucun dispositif pour ce compte"). C'est
+  // exactement ce qui s'est produit lors d'un bogue réel sur l'index de
+  // identifiantDispositif (voir models/Dispositif.js et errorHandler.js) :
+  // sans cette compensation, l'inscription "réussissait à moitié".
+  try {
+    await dispositifService.creerParDefaut(utilisateur.id ?? utilisateur._id.toString());
+  } catch (err) {
+    await utilisateurRepository.supprimer(utilisateur.id ?? utilisateur._id.toString());
+    throw err;
+  }
 
   return { utilisateur, jeton: genererJeton(utilisateur) };
 }

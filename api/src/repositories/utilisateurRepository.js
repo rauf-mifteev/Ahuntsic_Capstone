@@ -20,6 +20,11 @@ const utilisateurRepository = {
   async trouverParId(id) {
     return Utilisateur.findById(id);
   },
+
+  /** Utilisé uniquement pour compenser une inscription partiellement échouée (voir authService.inscrire). */
+  async supprimer(id) {
+    return Utilisateur.findByIdAndDelete(id);
+  },
 };
 
 module.exports = utilisateurRepository;
