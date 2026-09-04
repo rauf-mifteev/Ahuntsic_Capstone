@@ -2,6 +2,7 @@ const { Router } = require('express');
 const authRoutes = require('./authRoutes');
 const dispositifRoutes = require('./dispositifRoutes');
 const medicamentRoutes = require('./medicamentRoutes');
+const evenementRoutes = require('./evenementRoutes');
 
 const router = Router();
 
@@ -17,5 +18,6 @@ router.get('/sante', (req, res) => {
 router.use(authRoutes);
 router.use(dispositifRoutes);
 router.use(medicamentRoutes);
+router.use(evenementRoutes);
 
 module.exports = router;
