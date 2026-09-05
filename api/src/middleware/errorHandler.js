@@ -19,6 +19,17 @@ function errorHandler(err, req, res, next) {
     return res.status(400).json({ error: { message: err.message } });
   }
 
+  // Clé dupliquée MongoDB (index unique) -> 409 plutôt que 500. Sans ce
+  // cas, une contrainte d'unicité inattendue (ex. le bogue trouvé sur
+  // Dispositif.identifiantDispositif, voir models/Dispositif.js) renvoie
+  // "Erreur interne du serveur" sans aucun indice — ici, au moins le nom
+  // du champ en cause apparaît, ce qui aurait rendu ce bogue-là visible
+  // immédiatement plutôt que de devoir le déduire d'un symptôme indirect.
+  if (err.code === 11000) {
+    const champ = Object.keys(err.keyPattern || {})[0] || 'valeur';
+    return res.status(409).json({ error: { message: `Conflit : ${champ} déjà utilisé(e)` } });
+  }
+
   // Erreur inattendue : on ne renvoie jamais la pile d'appel au client.
   // eslint-disable-next-line no-console
   console.error(err);
