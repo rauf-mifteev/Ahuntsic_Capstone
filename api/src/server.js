@@ -2,6 +2,7 @@ const createApp = require('./app');
 const env = require('./config/env');
 const { connectDatabase } = require('./config/database');
 
+
 /**
  * Démarrage du processus : on se connecte d'abord à MongoDB Atlas, puis on
  * ouvre le port HTTP seulement si la connexion a réussi. Si la base n'est
