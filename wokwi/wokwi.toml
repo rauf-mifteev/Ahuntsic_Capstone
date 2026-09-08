@@ -1,0 +1,10 @@
+# Configuration Wokwi (PC-41). Ouvrir ce dossier avec l'extension Wokwi
+# Simulator (VS Code) ou déposer diagram.json + ce fichier sur wokwi.com.
+#
+# Pointe directement vers la sortie standard de PlatformIO — pas besoin
+# d'un script de copie séparé : `pio run` suffit avant de lancer la
+# simulation.
+[wokwi]
+version = 1
+firmware = '.pio/build/esp32dev/firmware.bin'
+elf = '.pio/build/esp32dev/firmware.elf'

@@ -1,0 +1,5 @@
+# Configuration personnelle — chacun garde la sienne, jamais committée.
+src/config_locale.h
+
+# Dossier de build PlatformIO — régénéré par `pio run`, pas versionné.
+.pio/
