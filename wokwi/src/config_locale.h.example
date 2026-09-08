@@ -1,0 +1,14 @@
+// Copier ce fichier en "config_locale.h" et y mettre VOS valeurs de test.
+// config_locale.h est ignoré par Git (voir .gitignore) — chacun garde les
+// siennes en local, sans écraser celles des autres.
+// Voir README.md, section "Configuration locale".
+
+#ifndef CONFIG_LOCALE_H
+#define CONFIG_LOCALE_H
+
+// Base de l'API, SANS "/evenements" à la fin — le firmware construit lui-même
+// les chemins complets (/evenements, /circuit/{id}/commandes-del, etc.).
+#define URL_API_BASE "https://VOTRE-API-DE-TEST.onrender.com/api"
+#define IDENTIFIANT_DISPOSITIF "VOTRE-IDENTIFIANT-DE-TEST"
+
+#endif

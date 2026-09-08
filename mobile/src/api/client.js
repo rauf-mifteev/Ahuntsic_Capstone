@@ -13,7 +13,7 @@ import * as SecureStore from 'expo-secure-store';
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000/api';
 const CLE_JETON = 'pilulier.jeton';
 
-export const client = axios.create({ baseURL: API_URL, timeout: 10000 });
+export const client = axios.create({ baseURL: API_URL, timeout: 45000 });
 
 client.interceptors.request.use(async (config) => {
   const jeton = await SecureStore.getItemAsync(CLE_JETON);

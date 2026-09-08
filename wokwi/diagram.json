@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "author": "Équipe Pilulier connecté",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp32", "top": 0, "left": 0, "attrs": {} },
+    { "type": "wokwi-pushbutton", "id": "bouton-couvercle", "top": -60, "left": 140, "attrs": { "color": "amber" } },
+    { "type": "wokwi-led", "id": "del-etat-reseau", "top": 40, "left": 220, "attrs": { "color": "blue" } },
+    { "type": "wokwi-resistor", "id": "resistance-del", "top": 60, "left": 260, "attrs": { "value": "220" } },
+
+    { "type": "wokwi-led", "id": "del-creneau-1", "top": 120, "left": 100, "attrs": { "color": "red", "label": "Matin" } },
+    { "type": "wokwi-resistor", "id": "resistance-creneau-1", "top": 140, "left": 100, "attrs": { "value": "220" } },
+    { "type": "wokwi-led", "id": "del-creneau-2", "top": 120, "left": 160, "attrs": { "color": "red", "label": "Midi" } },
+    { "type": "wokwi-resistor", "id": "resistance-creneau-2", "top": 140, "left": 160, "attrs": { "value": "220" } },
+    { "type": "wokwi-led", "id": "del-creneau-3", "top": 120, "left": 220, "attrs": { "color": "red", "label": "Soir" } },
+    { "type": "wokwi-resistor", "id": "resistance-creneau-3", "top": 140, "left": 220, "attrs": { "value": "220" } },
+    { "type": "wokwi-led", "id": "del-creneau-4", "top": 120, "left": 280, "attrs": { "color": "red", "label": "Coucher" } },
+    { "type": "wokwi-resistor", "id": "resistance-creneau-4", "top": 140, "left": 280, "attrs": { "value": "220" } }
+  ],
+  "connections": [
+    ["esp32:4", "bouton-couvercle:1.l", "green", []],
+    ["bouton-couvercle:2.l", "esp32:GND.1", "black", []],
+    ["esp32:2", "resistance-del:1", "yellow", []],
+    ["resistance-del:2", "del-etat-reseau:A", "yellow", []],
+    ["del-etat-reseau:C", "esp32:GND.2", "black", []],
+
+    ["esp32:16", "resistance-creneau-1:1", "red", []],
+    ["resistance-creneau-1:2", "del-creneau-1:A", "red", []],
+    ["del-creneau-1:C", "esp32:GND.3", "black", []],
+
+    ["esp32:17", "resistance-creneau-2:1", "red", []],
+    ["resistance-creneau-2:2", "del-creneau-2:A", "red", []],
+    ["del-creneau-2:C", "esp32:GND.4", "black", []],
+
+    ["esp32:18", "resistance-creneau-3:1", "red", []],
+    ["resistance-creneau-3:2", "del-creneau-3:A", "red", []],
+    ["del-creneau-3:C", "esp32:GND.5", "black", []],
+
+    ["esp32:19", "resistance-creneau-4:1", "red", []],
+    ["resistance-creneau-4:2", "del-creneau-4:A", "red", []],
+    ["del-creneau-4:C", "esp32:GND.6", "black", []],
+
+    ["esp32:TX", "$serialMonitor:RX", "", []],
+    ["esp32:RX", "$serialMonitor:TX", "", []]
+  ],
+  "dependencies": {}
+}
