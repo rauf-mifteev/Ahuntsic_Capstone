@@ -6,9 +6,14 @@ const creer = asyncHandler(async (req, res) => {
   res.status(201).json({ medicament });
 });
 
+const modifier = asyncHandler(async (req, res) => {
+  const medicament = await medicamentService.modifierMedicament(req.utilisateurId, req.params.id, req.body);
+  res.status(200).json({ medicament });
+});
+
 const lister = asyncHandler(async (req, res) => {
   const medicaments = await medicamentService.listerMedicaments(req.utilisateurId);
   res.status(200).json({ medicaments });
 });
 
-module.exports = { creer, lister };
+module.exports = { creer, modifier, lister };

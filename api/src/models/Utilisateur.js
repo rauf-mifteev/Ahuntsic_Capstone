@@ -1,12 +1,7 @@
 const mongoose = require('mongoose');
 
-/**
- * Utilisateur (Partie A, diagramme de classes).
- * Le mot de passe n'est JAMAIS stocké en clair : seul son empreinte
- * bcrypt (`motDePasseHache`) est enregistrée, et `select: false` l'exclut
- * par défaut de toute lecture pour qu'un simple `find()` ne le renvoie
- * jamais par accident.
- */
+const FUSEAU_PAR_DEFAUT = 'America/Toronto';
+
 const utilisateurSchema = new mongoose.Schema(
   {
     courriel: {
@@ -24,7 +19,7 @@ const utilisateurSchema = new mongoose.Schema(
     },
     fuseauHoraire: {
       type: String,
-      default: 'America/Toronto',
+      default: FUSEAU_PAR_DEFAUT,
     },
     preferences: {
       type: Map,
@@ -46,3 +41,4 @@ utilisateurSchema.set('toJSON', {
 });
 
 module.exports = mongoose.models.Utilisateur || mongoose.model('Utilisateur', utilisateurSchema);
+module.exports.FUSEAU_PAR_DEFAUT = FUSEAU_PAR_DEFAUT;

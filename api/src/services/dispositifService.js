@@ -1,10 +1,22 @@
 const ApiError = require('../utils/ApiError');
 const dispositifRepository = require('../repositories/dispositifRepository');
+const utilisateurRepository = require('../repositories/utilisateurRepository');
+const priseService = require('./priseService');
+const { FUSEAU_PAR_DEFAUT } = require('../models/Utilisateur');
 
 const REGEX_HEURE = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 async function creerParDefaut(utilisateurId) {
   return dispositifRepository.creerParDefaut(utilisateurId);
+}
+
+async function fuseauHorairePour(utilisateurId) {
+  try {
+    const utilisateur = await utilisateurRepository.trouverParId(utilisateurId);
+    return utilisateur?.fuseauHoraire || FUSEAU_PAR_DEFAUT;
+  } catch {
+    return FUSEAU_PAR_DEFAUT;
+  }
 }
 
 async function obtenirParUtilisateur(utilisateurId) {
@@ -15,11 +27,6 @@ async function obtenirParUtilisateur(utilisateurId) {
   return dispositif;
 }
 
-/**
- * F2 — attribuer une heure à chacun des 4 créneaux (RG-10 : jamais plus de
- * 4 heures différentes par jour — automatiquement vrai puisqu'il n'y a que
- * 4 créneaux, chacun avec une seule heure).
- */
 async function mettreAJourPlagesHoraires(utilisateurId, plages) {
   if (!Array.isArray(plages) || plages.length !== 4) {
     throw ApiError.badRequest('Les 4 créneaux doivent être fournis (RG-10)');
@@ -36,30 +43,31 @@ async function mettreAJourPlagesHoraires(utilisateurId, plages) {
     }
   }
 
+  const creneauxModifies = [];
   for (const plage of plages) {
     const cible = dispositif.plagesHoraires.find((p) => p.creneau === plage.creneau);
-    cible.heure = plage.heure ?? cible.heure;
-    if (plage.delaiTolerance !== undefined) {
-      cible.delaiTolerance = plage.delaiTolerance;
+    const nouvelleHeure = plage.heure ?? cible.heure;
+    const nouveauDelai = plage.delaiTolerance !== undefined ? plage.delaiTolerance : cible.delaiTolerance;
+
+    if (nouvelleHeure !== cible.heure || nouveauDelai !== cible.delaiTolerance) {
+      creneauxModifies.push(plage.creneau);
     }
+
+    cible.heure = nouvelleHeure;
+    cible.delaiTolerance = nouveauDelai;
   }
 
   await dispositifRepository.sauvegarder(dispositif);
+
+  await priseService.replanifierPrisesAVenir({
+    dispositif,
+    creneauxModifies,
+    fuseauHoraire: await fuseauHorairePour(utilisateurId),
+  });
+
   return dispositif;
 }
 
-/**
- * F3 — associer le pilulier physique/simulé au compte (PC-37/38).
- *
- * RG-09 : un compte n'a qu'un seul pilulier à la fois. Comme le Dispositif
- * "en attente" existe déjà depuis l'inscription (voir la note dans
- * models/Dispositif.js), "associer" revient à lui attribuer son premier
- * (et unique) identifiantDispositif — une deuxième tentative est refusée.
- *
- * Dépendances passées en paramètres (plutôt qu'importées directement)
- * pour éviter un cycle de dépendances entre services et garder ce module
- * facile à tester : voir l'appel dans dispositifController.
- */
 async function associerDispositif(utilisateurId, identifiantDispositif, { medicamentRepository, priseService }) {
   if (!identifiantDispositif || !identifiantDispositif.trim()) {
     throw ApiError.badRequest("L'identifiant du dispositif est requis");
@@ -81,22 +89,29 @@ async function associerDispositif(utilisateurId, identifiantDispositif, { medica
   dispositif.dernierContact = new Date();
   await dispositifRepository.sauvegarder(dispositif);
 
-  // Séquence 04_sequence_configuration.puml : l'association déclenche la
-  // génération des 7 prochains jours de prises attendues, à partir des
-  // médicaments déjà enregistrés (F2).
   const medicaments = await medicamentRepository.listerParUtilisateur(utilisateurId);
   const prisesGenerees = await priseService.genererEtEnregistrerProchainesPrises({
     utilisateurId,
     dispositif,
     medicaments,
+    fuseauHoraire: await fuseauHorairePour(utilisateurId),
   });
 
   return { dispositif, nombrePrisesGenerees: prisesGenerees.length };
 }
 
+async function demanderPhotoReference(utilisateurId) {
+  const dispositif = await obtenirParUtilisateur(utilisateurId);
+  dispositif.prochaineFermetureEstReference = true;
+  await dispositifRepository.sauvegarder(dispositif);
+  return dispositif;
+}
+
 module.exports = {
   creerParDefaut,
+  fuseauHorairePour,
   obtenirParUtilisateur,
   mettreAJourPlagesHoraires,
   associerDispositif,
+  demanderPhotoReference,
 };

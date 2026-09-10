@@ -23,3 +23,17 @@ describe('Route inconnue', () => {
     expect(res.body.error.message).toContain('/api/ceci-nexiste-pas');
   });
 });
+
+describe('Corps JSON malformé', () => {
+  it('répond 400 et non 500 : la faute est celle du client', async () => {
+    const app = createApp();
+
+    const res = await request(app)
+      .post('/api/comptes')
+      .set('Content-Type', 'application/json')
+      .send('{courriel:pas-du-json}');
+
+    expect(res.status).toBe(400);
+    expect(res.body.error.message).toMatch(/JSON/i);
+  });
+});

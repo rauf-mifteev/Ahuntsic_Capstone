@@ -59,9 +59,49 @@ describe('medicamentService.creerMedicament', () => {
     const resultat = await medicamentService.creerMedicament('u1', medicamentValide);
 
     expect(medicamentRepository.creer).toHaveBeenCalledWith(
-      expect.objectContaining({ utilisateur: 'u1', nom: 'Metformine', creneau: 1 })
+      expect.objectContaining({ utilisateur: 'u1', nom: 'Metformine', creneaux: [1] })
     );
     expect(resultat.id).toBe('m1');
+  });
+
+  it('accepte un médicament dans plusieurs créneaux', async () => {
+    dispositifService.obtenirParUtilisateur.mockResolvedValue(faireDispositif(['08:00', null, '18:00', null]));
+    medicamentRepository.creer.mockResolvedValue({ id: 'm2' });
+
+    await medicamentService.creerMedicament('u1', { ...medicamentValide, creneau: undefined, creneaux: [1, 3] });
+
+    expect(medicamentRepository.creer).toHaveBeenCalledWith(
+      expect.objectContaining({ creneaux: [1, 3] })
+    );
+  });
+
+  it('normalise les créneaux : triés et sans doublon', async () => {
+    dispositifService.obtenirParUtilisateur.mockResolvedValue(faireDispositif(['08:00', null, '18:00', null]));
+    medicamentRepository.creer.mockResolvedValue({ id: 'm3' });
+
+    await medicamentService.creerMedicament('u1', { ...medicamentValide, creneau: undefined, creneaux: [3, 1, 3] });
+
+    expect(medicamentRepository.creer).toHaveBeenCalledWith(
+      expect.objectContaining({ creneaux: [1, 3] })
+    );
+  });
+
+  it('refuse si UN SEUL des créneaux demandés n\'a pas d\'heure', async () => {
+
+    dispositifService.obtenirParUtilisateur.mockResolvedValue(faireDispositif(['08:00', null, null, null]));
+
+    await expect(
+      medicamentService.creerMedicament('u1', { ...medicamentValide, creneau: undefined, creneaux: [1, 3] })
+    ).rejects.toMatchObject({ statusCode: 400 });
+    expect(medicamentRepository.creer).not.toHaveBeenCalled();
+  });
+
+  it('refuse une liste de créneaux vide', async () => {
+    dispositifService.obtenirParUtilisateur.mockResolvedValue(faireDispositif(['08:00', null, null, null]));
+
+    await expect(
+      medicamentService.creerMedicament('u1', { ...medicamentValide, creneau: undefined, creneaux: [] })
+    ).rejects.toMatchObject({ statusCode: 400 });
   });
 });
 

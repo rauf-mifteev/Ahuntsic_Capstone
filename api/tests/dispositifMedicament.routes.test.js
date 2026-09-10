@@ -81,6 +81,20 @@ describe('Routes /dispositifs', () => {
 
     expect(res.status).toBe(409);
   });
+
+  it('POST /api/dispositifs/moi/confirmer-remplissage pose le drapeau de référence (RG-13)', async () => {
+    dispositifService.demanderPhotoReference.mockResolvedValue({
+      id: 'd1',
+      prochaineFermetureEstReference: true,
+    });
+
+    const res = await request(app)
+      .post('/api/dispositifs/moi/confirmer-remplissage')
+      .set('Authorization', 'Bearer x');
+
+    expect(res.status).toBe(200);
+    expect(res.body.dispositif.prochaineFermetureEstReference).toBe(true);
+  });
 });
 
 describe('Routes /medicaments', () => {
@@ -117,5 +131,54 @@ describe('Routes /medicaments', () => {
 
     expect(res.status).toBe(200);
     expect(res.body.medicaments).toHaveLength(2);
+  });
+
+  it('POST /api/medicaments accepte plusieurs créneaux', async () => {
+    medicamentService.creerMedicament.mockResolvedValue({ id: 'm1', creneaux: [1, 3] });
+
+    const res = await request(app)
+      .post('/api/medicaments')
+      .set('Authorization', 'Bearer x')
+      .send({ nom: 'Metformine', dosage: '500 mg', creneaux: [1, 3], joursSemaine: ['LUNDI'] });
+
+    expect(res.status).toBe(201);
+    expect(medicamentService.creerMedicament).toHaveBeenCalledWith(
+      'u1',
+      expect.objectContaining({ creneaux: [1, 3] })
+    );
+  });
+
+  it('PUT /api/medicaments/:id modifie un médicament (200)', async () => {
+    medicamentService.modifierMedicament.mockResolvedValue({ id: 'm1', dosage: '850 mg' });
+
+    const res = await request(app)
+      .put('/api/medicaments/m1')
+      .set('Authorization', 'Bearer x')
+      .send({ dosage: '850 mg', creneaux: [1, 3] });
+
+    expect(res.status).toBe(200);
+    expect(res.body.medicament.dosage).toBe('850 mg');
+    expect(medicamentService.modifierMedicament).toHaveBeenCalledWith(
+      'u1',
+      'm1',
+      expect.objectContaining({ dosage: '850 mg', creneaux: [1, 3] })
+    );
+  });
+
+  it('PUT /api/medicaments/:id refuse sans jeton', async () => {
+    const res = await request(app).put('/api/medicaments/m1').send({ dosage: '850 mg' });
+    expect(res.status).toBe(401);
+  });
+
+  it('PUT /api/medicaments/:id propage le 404 du service', async () => {
+    const ApiError = require('../src/utils/ApiError');
+    medicamentService.modifierMedicament.mockRejectedValue(ApiError.notFound('Médicament introuvable'));
+
+    const res = await request(app)
+      .put('/api/medicaments/inconnu')
+      .set('Authorization', 'Bearer x')
+      .send({ dosage: '850 mg' });
+
+    expect(res.status).toBe(404);
   });
 });

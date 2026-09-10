@@ -1,26 +1,14 @@
 const ApiError = require('../utils/ApiError');
 const dispositifRepository = require('../repositories/dispositifRepository');
 const evenementRepository = require('../repositories/evenementRepository');
+const verificationRepository = require('../repositories/verificationRepository');
+const comparaisonService = require('./comparaisonService');
+const comparaisonPlateauService = require('./comparaisonPlateauService');
+const priseService = require('./priseService');
 
 const TYPES_VALIDES = ['OUVERTURE', 'FERMETURE'];
 
-/**
- * F4 — recevoir les ouvertures/fermetures du couvercle envoyées par le
- * circuit (PC-40/41/42/43).
- *
- * Sécurité (AC de PC-42, "un pilulier inconnu est rejeté") : ce point
- * d'entrée n'est PAS protégé par un jeton utilisateur — le circuit n'a
- * jamais de compte ni de mot de passe. C'est `identifiantDispositif`
- * lui-même qui joue le rôle d'identifiant : s'il ne correspond à AUCUN
- * dispositif déjà associé (POST /dispositifs/associer, PC-38), l'API
- * refuse l'événement plutôt que de l'accepter à l'aveugle.
- *
- * Amélioration documentée pour un sprint futur : remplacer
- * `identifiantDispositif` par un jeton d'appareil signé (émis lors de
- * l'association) pour empêcher qu'un tiers connaissant seulement
- * l'identifiant n'envoie de faux événements.
- */
-async function enregistrerEvenement({ identifiantDispositif, type, horodatage }) {
+async function enregistrerEvenement({ identifiantDispositif, type, horodatage, image }) {
   if (!identifiantDispositif) {
     throw ApiError.badRequest("L'identifiant du dispositif est requis");
   }
@@ -30,8 +18,12 @@ async function enregistrerEvenement({ identifiantDispositif, type, horodatage })
 
   const dispositif = await dispositifRepository.trouverParIdentifiant(identifiantDispositif);
   if (!dispositif) {
-    // Pilulier inconnu : ni essayé de deviner un compte, ni créé de dispositif fantôme.
+
     throw ApiError.unauthorized('Dispositif inconnu ou non associé à un compte');
+  }
+
+  if (dispositif.modeDemoDeconnecte) {
+    throw new ApiError(503, 'Dispositif temporairement injoignable (démonstration)');
   }
 
   const horodatageEvenement = horodatage ? new Date(horodatage) : new Date();
@@ -39,20 +31,85 @@ async function enregistrerEvenement({ identifiantDispositif, type, horodatage })
     throw ApiError.badRequest('Horodatage invalide');
   }
 
+  const dispositifId = dispositif.id ?? dispositif._id;
+
   const evenement = await evenementRepository.creer({
-    dispositif: dispositif.id ?? dispositif._id,
+    dispositif: dispositifId,
     identifiantDispositif,
     type,
     horodatage: horodatageEvenement,
   });
 
-  // Le fait même de recevoir un événement prouve que le dispositif est en
-  // ligne : on met à jour son état plutôt que d'attendre un signal séparé.
   dispositif.etatConnexion = 'CONNECTE';
   dispositif.dernierContact = new Date();
   await dispositifRepository.sauvegarder(dispositif);
 
-  return evenement;
+  let verification = null;
+  if (type === 'OUVERTURE') {
+
+    await priseService.demarrerVerificationsPourOuverture(dispositifId, horodatageEvenement);
+  } else if (type === 'FERMETURE') {
+    verification = await declencherVerification({ dispositif, identifiantDispositif, evenement, image, horodatageEvenement });
+  }
+
+  return { evenement, verification };
+}
+
+async function declencherVerification({ dispositif, identifiantDispositif, evenement, image, horodatageEvenement }) {
+  const dispositifId = dispositif.id ?? dispositif._id;
+
+  const estReference = dispositif.prochaineFermetureEstReference === true;
+
+  const verification = await verificationRepository.creer({
+    dispositif: dispositifId,
+    evenementOuverture: evenement.id ?? evenement._id,
+    image: image || null,
+    moment: horodatageEvenement,
+    estReference,
+    etatsZones: [],
+    photoSimulee: !image,
+    analyseEchouee: false,
+  });
+
+  try {
+
+    const resultat = image
+      ? await comparaisonService.analyserImage(image)
+      : await comparaisonService.analyserPlateauSimule(identifiantDispositif);
+    verification.etatsZones = resultat.resultats.map((r) => ({
+      indice: r.indice,
+      occupee: r.occupee,
+      score: r.score,
+    }));
+    verification.strategieUtilisee = resultat.strategie;
+
+    if (!image && resultat.image) {
+      verification.image = resultat.image;
+    }
+    await verificationRepository.sauvegarder(verification);
+
+    if (estReference) {
+
+      dispositif.prochaineFermetureEstReference = false;
+      await dispositifRepository.sauvegarder(dispositif);
+      return verification;
+    }
+
+    const comparaison = await comparaisonPlateauService.comparerEtEnregistrer(dispositifId, verification);
+
+    if (comparaison && comparaison.compartimentsVides.length > 0) {
+      await priseService.reglerDepuisComparaison(dispositifId, comparaison.compartimentsVides, verification);
+    }
+
+    return verification;
+  } catch (err) {
+
+    verification.analyseEchouee = true;
+    // eslint-disable-next-line no-console
+    console.warn("Service d'analyse indisponible, fermeture enregistrée sans vérification :", err.message);
+    await verificationRepository.sauvegarder(verification);
+    return verification;
+  }
 }
 
 module.exports = { enregistrerEvenement };

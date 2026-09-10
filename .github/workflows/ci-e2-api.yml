@@ -1,0 +1,66 @@
+# Étape 2 — API (PC-89)
+# Ce fichier REMPLACE l'ancien .github/workflows/ci.yml : il fait la même
+# chose, plus la vérification des fichiers de configuration. Supprimez ci.yml
+# en ajoutant celui-ci, sinon les tests de l'API tourneront deux fois.
+
+name: E2 · API
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'api/**'
+      - '.github/workflows/ci-e2-api.yml'
+  pull_request:
+    paths:
+      - 'api/**'
+      - '.github/workflows/ci-e2-api.yml'
+
+jobs:
+  tests:
+    name: Tests API (Node 20)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Refuser tout fichier de configuration versionné
+        run: |
+          fuites=$(git ls-files | grep -E '(^|/)\.env' | grep -v '\.env\.example$' || true)
+          if [ -n "$fuites" ]; then
+            echo "::error::Fichier de configuration versionné (il contient des vraies valeurs) :"
+            echo "$fuites"
+            echo "Seul .env.example doit se trouver dans le dépôt."
+            exit 1
+          fi
+          echo "Aucun fichier .env versionné."
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: api/package-lock.json
+
+      - name: Installer les dépendances
+        working-directory: api
+        run: npm ci
+
+      - name: Analyse statique (lint)
+        working-directory: api
+        run: npm run lint
+
+      - name: Exécuter les tests
+        working-directory: api
+        run: npm test -- --ci --coverage
+        env:
+          NODE_ENV: test
+          JWT_SECRET: ci-test-secret
+
+      - name: Publier la couverture de tests
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: couverture-api
+          path: api/coverage

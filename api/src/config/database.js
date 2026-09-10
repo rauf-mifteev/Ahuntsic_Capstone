@@ -1,14 +1,6 @@
 const mongoose = require('mongoose');
 const env = require('./env');
 
-/**
- * Connexion à MongoDB Atlas (PC-36).
- *
- * La chaîne de connexion vient uniquement de la variable d'environnement
- * MONGODB_URI (voir env.js) : aucune valeur n'est écrite ici. En test, on
- * n'appelle jamais cette fonction — les tests mockent les repositories, donc
- * aucune connexion réseau réelle n'est nécessaire pour que `npm test` passe.
- */
 async function connectDatabase() {
   mongoose.set('strictQuery', true);
 

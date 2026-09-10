@@ -6,11 +6,15 @@ const medicamentRepository = {
   },
 
   async listerParUtilisateur(utilisateurId) {
-    return Medicament.find({ utilisateur: utilisateurId }).sort({ creneau: 1, nom: 1 });
+    return Medicament.find({ utilisateur: utilisateurId }).sort({ nom: 1 });
   },
 
   async trouverParId(id) {
     return Medicament.findById(id);
+  },
+
+  async sauvegarder(medicament) {
+    return medicament.save();
   },
 };
 

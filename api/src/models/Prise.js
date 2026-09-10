@@ -1,31 +1,31 @@
 const mongoose = require('mongoose');
 
-/**
- * Prise (Partie A, diagramme de classes) : une prise ATTENDUE pour un
- * médicament, un jour et un créneau donnés. Générée à l'avance pour les 7
- * prochains jours (voir dispositifService.associerDispositif), puis mise à
- * jour par les sprints suivants (F5/F6) quand le patient prend réellement
- * son médicament ou que le délai de tolérance expire.
- */
 const priseSchema = new mongoose.Schema(
   {
-    utilisateur: { type: mongoose.Schema.Types.ObjectId, ref: 'Utilisateur', required: true, index: true },
-    dispositif: { type: mongoose.Schema.Types.ObjectId, ref: 'Dispositif', required: true },
-    medicament: { type: mongoose.Schema.Types.ObjectId, ref: 'Medicament', required: true },
-    creneau: { type: Number, required: true, min: 1, max: 4 },
-    // "AAAA-MM-JJ" — pratique pour requêter "les prises d'aujourd'hui" sans jongler avec les fuseaux horaires.
+    dispositif: { type: mongoose.Schema.Types.ObjectId, ref: 'Dispositif', required: true, index: true },
+    compartimentIndice: { type: Number, required: true, min: 0, max: 27 },
+
     date: { type: String, required: true },
     heurePrevue: { type: Date, required: true },
+
+    delaiTolerance: { type: Number, required: true },
     statut: {
       type: String,
-      enum: ['ATTENDUE', 'PRISE', 'MANQUEE'],
-      default: 'ATTENDUE',
+      enum: ['PREVUE', 'EN_VERIFICATION', 'CONFIRMEE', 'MANQUEE', 'AMBIGUE'],
+      default: 'PREVUE',
     },
+    origineConfirmation: {
+      type: String,
+      enum: ['AUTOMATIQUE', 'MANUELLE', null],
+      default: null,
+    },
+    dateChangementStatut: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );
 
-priseSchema.index({ utilisateur: 1, date: 1 });
+priseSchema.index({ dispositif: 1, date: 1 });
+priseSchema.index({ dispositif: 1, compartimentIndice: 1, statut: 1 });
 
 priseSchema.set('toJSON', {
   transform: (_doc, ret) => {

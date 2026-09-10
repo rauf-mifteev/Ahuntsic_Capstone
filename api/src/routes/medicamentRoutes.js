@@ -4,8 +4,8 @@ const { authentificationRequise } = require('../middleware/authMiddleware');
 
 const router = Router();
 
-// Voir la note dans dispositifRoutes.js : middleware posé par route, pas via router.use().
 router.post('/medicaments', authentificationRequise, medicamentController.creer);
+router.put('/medicaments/:id', authentificationRequise, medicamentController.modifier);
 router.get('/medicaments', authentificationRequise, medicamentController.lister);
 
 module.exports = router;

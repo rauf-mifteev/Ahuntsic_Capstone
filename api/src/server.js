@@ -1,15 +1,11 @@
 const createApp = require('./app');
 const env = require('./config/env');
 const { connectDatabase } = require('./config/database');
+const { purgerImagesAnciennes } = require('./jobs/purgerImagesAnciennes');
+const priseService = require('./services/priseService');
 
+const UNE_JOURNEE_MS = 24 * 60 * 60 * 1000;
 
-/**
- * Démarrage du processus : on se connecte d'abord à MongoDB Atlas, puis on
- * ouvre le port HTTP seulement si la connexion a réussi. Si la base n'est
- * pas joignable, on préfère un échec bruyant au démarrage (visible dans les
- * journaux de l'hébergeur) plutôt qu'une API qui répond mais qui échoue sur
- * chaque requête (R-06).
- */
 async function start() {
   await connectDatabase();
 
@@ -18,6 +14,28 @@ async function start() {
     // eslint-disable-next-line no-console
     console.log(`API pilulier à l'écoute sur le port ${env.port} (${env.nodeEnv})`);
   });
+
+  purgerImagesAnciennes().catch((err) => {
+    // eslint-disable-next-line no-console
+    console.error('Échec de la purge des images au démarrage :', err);
+  });
+  setInterval(() => {
+    purgerImagesAnciennes().catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('Échec de la purge périodique des images :', err);
+    });
+  }, UNE_JOURNEE_MS);
+
+  priseService.marquerEnRetardCommeManquees().catch((err) => {
+    // eslint-disable-next-line no-console
+    console.error('Échec de la vérification des prises en retard au démarrage :', err);
+  });
+  setInterval(() => {
+    priseService.marquerEnRetardCommeManquees().catch((err) => {
+      // eslint-disable-next-line no-console
+      console.error('Échec de la vérification périodique des prises en retard :', err);
+    });
+  }, env.delaiVerificationRetardMs);
 }
 
 start().catch((err) => {
