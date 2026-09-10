@@ -71,7 +71,7 @@ export default function CreneauxScreen({ navigation }) {
       <Text style={styles.eyebrow}>Traitement</Text>
       <Text style={styles.titre}>Mes moments de prise</Text>
       <Text style={styles.sousTitre}>
-        Quatre créneaux fixes par jour. Laissez un champ vide si vous ne l'utilisez pas.
+        Quatre créneaux fixes par jour. Laissez un champ vide si vous ne l’utilisez pas.
       </Text>
 
       {plages.map((p, i) => (

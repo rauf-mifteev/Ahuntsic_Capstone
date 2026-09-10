@@ -51,7 +51,6 @@ export default function DispositifScreen() {
       setDispositif(resultat);
       setMessage('Pilulier associé. Votre traitement des 7 prochains jours est prêt.');
     } catch (err) {
-
       setErreur(messageErreur(err));
     } finally {
       setAssociation(false);
@@ -89,7 +88,7 @@ export default function DispositifScreen() {
       {!dejaAssocie && (
         <View style={styles.formulaire}>
           <Text style={styles.sousTitre}>
-            Entrez l'identifiant affiché sur l'écran de votre pilulier (ou de son circuit simulé).
+            Entrez l’identifiant affiché sur l’écran de votre pilulier (ou de son circuit simulé).
           </Text>
           <TextField
             label="Identifiant du dispositif"

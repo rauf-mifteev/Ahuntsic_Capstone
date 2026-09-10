@@ -44,6 +44,8 @@ export default function RemplissageScreen({ navigation }) {
         setZonesVides(zones);
         setEtape('resultat');
       } catch (err) {
+        // Sondage périodique : erreur ignorée volontairement, on
+        // retentera automatiquement au prochain intervalle.
 
       }
     }, DELAI_SONDAGE_MS);
@@ -126,7 +128,7 @@ export default function RemplissageScreen({ navigation }) {
           <Ionicons name="time-outline" size={56} color={colors.clay} style={{ marginBottom: spacing.lg }} />
           <Text style={styles.titre}>Toujours pas de photo</Text>
           <Text style={styles.sousTitre}>
-            Nous n'avons pas reçu de photo de votre pilulier. Vérifiez qu'il est bien connecté et
+            Nous n’avons pas reçu de photo de votre pilulier. Vérifiez qu’il est bien connecté et
             que le couvercle a été fermé, puis réessayez.
           </Text>
           <PrimaryButton label="Réessayer" onPress={() => setEtape('avant')} />

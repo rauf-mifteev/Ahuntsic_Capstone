@@ -57,6 +57,9 @@ export default function DashboardScreen({ navigation }) {
             console.warn('Rappels non programmés :', err?.message || err);
           });
         } catch (err) {
+          // Chargement du tableau de bord : erreur ignorée volontairement,
+          // l'écran reste utilisable même si prises/dispositif/médicaments
+          // ne se chargent pas (ex. hors-ligne).
 
         }
       })();
@@ -75,7 +78,7 @@ export default function DashboardScreen({ navigation }) {
 
       {prises.length > 0 && (
         <View style={styles.section}>
-          <Text style={styles.sectionTitre}>Aujourd'hui</Text>
+          <Text style={styles.sectionTitre}>Aujourd’hui</Text>
           {prises.map((prise) => {
             const badge = BADGE_PAR_STATUT[prise.statut] || BADGE_PAR_STATUT.PREVUE;
             return (
