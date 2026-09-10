@@ -1,0 +1,60 @@
+# Étape 3 — Application mobile (PC-90)
+#
+# ATTENTION : le projet mobile n'a AUCUNE suite de tests automatiques.
+# Ce fichier ne peut donc pas prouver que les écrans fonctionnent. Il vérifie
+# ce qui est vérifiable sans appareil : que le code passe l'analyse statique,
+# que la configuration est lisible, et qu'aucune adresse d'API n'est écrite
+# en dur — le piège qui a déjà coûté du temps à l'équipe.
+
+name: E3 · Application mobile
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/ci-e3-mobile.yml'
+  pull_request:
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/ci-e3-mobile.yml'
+
+jobs:
+  verifications:
+    name: Analyse statique et configuration
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Installer les dépendances
+        working-directory: mobile
+        run: npm ci
+
+      - name: Analyse statique (lint)
+        working-directory: mobile
+        run: npm run lint
+
+      - name: Refuser une adresse d'API écrite en dur
+        working-directory: mobile
+        run: |
+          trouve=$(grep -rnE "localhost:3000|127\.0\.0\.1:3000|192\.168\.[0-9]+\.[0-9]+" src App.js || true)
+          if [ -n "$trouve" ]; then
+            echo "::error::Adresse d'API écrite en dur dans le code :"
+            echo "$trouve"
+            echo "L'adresse doit venir de EXPO_PUBLIC_API_URL, dans mobile/.env (non versionné)."
+            exit 1
+          fi
+          echo "Aucune adresse en dur."
+
+      - name: Vérifier que app.json est lisible
+        working-directory: mobile
+        run: node -e "JSON.parse(require('fs').readFileSync('app.json','utf8')); console.log('app.json valide')"
