@@ -1,7 +1,9 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000/api';
+const HOTE_PAR_DEFAUT = 'localhost';
+const PORT_PAR_DEFAUT = 3000;
+const API_URL = process.env.EXPO_PUBLIC_API_URL || `http://${HOTE_PAR_DEFAUT}:${PORT_PAR_DEFAUT}/api`;
 const CLE_JETON = 'pilulier.jeton';
 
 export const client = axios.create({ baseURL: API_URL, timeout: 45000 });
