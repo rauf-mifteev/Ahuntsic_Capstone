@@ -8,11 +8,17 @@ const medicamentSchema = new mongoose.Schema(
     nom: { type: String, required: [true, 'Le nom du médicament est requis'], trim: true },
     dosage: { type: String, required: [true, 'Le dosage est requis'], trim: true },
     notesApparence: { type: String, default: '' },
-    // Le créneau (1 à 4) porte l'heure : deux médicaments dans le même
-    // créneau partagent donc forcément la même heure (RG-01), et un
-    // médicament ne peut pas être à deux heures différentes dans le même
-    // créneau (RG-02) puisqu'il n'y a qu'une heure par créneau.
-    creneau: { type: Number, required: true, min: 1, max: 4 },
+
+    creneaux: {
+      type: [{ type: Number, min: 1, max: 4 }],
+      required: true,
+      validate: {
+        validator: (v) => Array.isArray(v) && v.length > 0 && new Set(v).size === v.length,
+        message: 'Au moins un créneau est requis, sans doublon',
+      },
+    },
+
+    creneau: { type: Number, min: 1, max: 4, default: undefined },
     joursSemaine: {
       type: [{ type: String, enum: JOURS_VALIDES }],
       required: true,
@@ -34,5 +40,14 @@ medicamentSchema.set('toJSON', {
   },
 });
 
+function creneauxDe(medicament) {
+  if (!medicament) return [];
+  if (Array.isArray(medicament.creneaux) && medicament.creneaux.length > 0) {
+    return medicament.creneaux;
+  }
+  return medicament.creneau ? [medicament.creneau] : [];
+}
+
 module.exports = mongoose.models.Medicament || mongoose.model('Medicament', medicamentSchema);
 module.exports.JOURS_VALIDES = JOURS_VALIDES;
+module.exports.creneauxDe = creneauxDe;

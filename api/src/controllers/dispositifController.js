@@ -22,4 +22,9 @@ const associer = asyncHandler(async (req, res) => {
   res.status(200).json({ dispositif, nombrePrisesGenerees });
 });
 
-module.exports = { obtenirMonDispositif, mettreAJourPlagesHoraires, associer };
+const confirmerRemplissage = asyncHandler(async (req, res) => {
+  const dispositif = await dispositifService.demanderPhotoReference(req.utilisateurId);
+  res.status(200).json({ dispositif });
+});
+
+module.exports = { obtenirMonDispositif, mettreAJourPlagesHoraires, associer, confirmerRemplissage };

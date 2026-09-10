@@ -59,7 +59,7 @@ describe('authService.inscrire', () => {
     });
 
     expect(typeof jeton).toBe('string');
-    expect(jeton.split('.')).toHaveLength(3); // un JWT a 3 segments
+    expect(jeton.split('.')).toHaveLength(3);
   });
 
   it('crée le dispositif "en attente" du nouveau compte (RG-09)', async () => {

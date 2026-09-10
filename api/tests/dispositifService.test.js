@@ -1,7 +1,16 @@
 jest.mock('../src/repositories/dispositifRepository');
 
+jest.mock('../src/repositories/priseRepository');
+jest.mock('../src/repositories/utilisateurRepository');
+
 const dispositifRepository = require('../src/repositories/dispositifRepository');
+const priseRepository = require('../src/repositories/priseRepository');
 const dispositifService = require('../src/services/dispositifService');
+
+beforeEach(() => {
+  priseRepository.listerReplanifiablesPourDispositif.mockResolvedValue([]);
+  priseRepository.creerPlusieurs.mockResolvedValue([]);
+});
 
 function faireDispositif() {
   return {
@@ -78,6 +87,18 @@ describe('dispositifService.obtenirParUtilisateur', () => {
   });
 });
 
+describe('dispositifService.demanderPhotoReference', () => {
+  it('pose le drapeau prochaineFermetureEstReference et sauvegarde', async () => {
+    const dispositif = faireDispositif();
+    dispositifRepository.trouverParUtilisateur.mockResolvedValue(dispositif);
+    dispositifRepository.sauvegarder.mockResolvedValue(dispositif);
+
+    const resultat = await dispositifService.demanderPhotoReference('u1');
+
+    expect(resultat.prochaineFermetureEstReference).toBe(true);
+    expect(dispositifRepository.sauvegarder).toHaveBeenCalledWith(dispositif);
+  });
+});
 describe('dispositifService.associerDispositif', () => {
   function faireDeps() {
     return {
