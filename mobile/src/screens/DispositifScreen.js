@@ -13,7 +13,6 @@ const LIBELLES_ETAT = {
   HORS_LIGNE: { texte: 'Hors ligne', couleurFond: colors.clayBg, couleurTexte: colors.clay },
 };
 
-/** F3 — voir l'état d'association du pilulier, et l'associer (PC-37/38/39). */
 export default function DispositifScreen() {
   const [dispositif, setDispositif] = useState(null);
   const [identifiant, setIdentifiant] = useState('');
@@ -52,8 +51,7 @@ export default function DispositifScreen() {
       setDispositif(resultat);
       setMessage('Pilulier associé. Votre traitement des 7 prochains jours est prêt.');
     } catch (err) {
-      // RG-09 : le message du serveur explique déjà pourquoi (déjà associé
-      // à ce compte, ou déjà pris par un autre compte).
+
       setErreur(messageErreur(err));
     } finally {
       setAssociation(false);

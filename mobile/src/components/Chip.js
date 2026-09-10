@@ -3,7 +3,6 @@ import { Pressable, Text, StyleSheet } from 'react-native';
 import { colors, radius, spacing } from '../theme/colors';
 import { fonts, fontSizes } from '../theme/typography';
 
-/** Petite étiquette sélectionnable, utilisée pour les jours de la semaine et les créneaux. */
 export default function Chip({ label, selected, onPress }) {
   return (
     <Pressable

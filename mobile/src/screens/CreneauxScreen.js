@@ -11,11 +11,6 @@ import { fonts, fontSizes } from '../theme/typography';
 const REGEX_HEURE = /^([01]\d|2[0-3]):[0-5]\d$/;
 const LIBELLES_CRENEAU = ['Matin', 'Midi', 'Soir', 'Coucher'];
 
-/**
- * F2 — attribuer une heure à chacun des 4 créneaux fixes de la journée.
- * (RG-10 : impossible d'en avoir un 5e — l'écran n'affiche que 4 champs,
- * la règle est donc respectée par construction plutôt que vérifiée.)
- */
 export default function CreneauxScreen({ navigation }) {
   const [plages, setPlages] = useState([1, 2, 3, 4].map((creneau) => ({ creneau, heure: '' })));
   const [erreurs, setErreurs] = useState({});
@@ -69,7 +64,7 @@ export default function CreneauxScreen({ navigation }) {
     }
   }
 
-  if (chargement) return null; // ScreenContainer garde le fond crème pendant le chargement bref
+  if (chargement) return null;
 
   return (
     <ScreenContainer>

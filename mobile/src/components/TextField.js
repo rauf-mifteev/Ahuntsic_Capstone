@@ -3,11 +3,6 @@ import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { colors, radius, spacing } from '../theme/colors';
 import { fonts, fontSizes } from '../theme/typography';
 
-/**
- * Champ de texte accessible : étiquette toujours visible (pas seulement un
- * placeholder qui disparaît), grande zone de saisie, message d'erreur en
- * texte (pas seulement en couleur) — voir R-09 / WCAG 2.1 AA.
- */
 export default function TextField({ label, error, style, ...props }) {
   return (
     <View style={[styles.wrapper, style]}>
@@ -42,7 +37,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.body,
     fontSize: fontSizes.body,
     color: colors.ink,
-    minHeight: 48, // zone à toucher large (R-09)
+    minHeight: 48,
   },
   inputErreur: { borderColor: colors.clay },
   erreur: {

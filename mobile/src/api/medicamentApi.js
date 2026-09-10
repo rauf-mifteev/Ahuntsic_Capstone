@@ -5,6 +5,11 @@ export async function creerMedicament(medicament) {
   return data.medicament;
 }
 
+export async function modifierMedicament(id, medicament) {
+  const { data } = await client.put(`/medicaments/${id}`, medicament);
+  return data.medicament;
+}
+
 export async function listerMedicaments() {
   const { data } = await client.get('/medicaments');
   return data.medicaments;
