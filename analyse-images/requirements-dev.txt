@@ -1,0 +1,4 @@
+# Dépendances nécessaires uniquement pour lancer les tests.
+# Installer avec : pip install -r requirements.txt -r requirements-dev.txt
+pytest>=8.0
+httpx>=0.27                    # utilisé par le TestClient de FastAPI pour appeler l'app sans serveur

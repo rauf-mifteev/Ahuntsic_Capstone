@@ -1,0 +1,8 @@
+# Dépendances SUPPLÉMENTAIRES pour entraîner le vrai modèle MobileNetV3
+# (PC-48). Pas nécessaires pour faire tourner le service en mode
+# "factice" ou "seuillage" — seulement pour exécuter
+# entrainement/entrainer_mobilenet.py.
+#
+# Installer avec : pip install -r requirements.txt -r requirements-entrainement.txt
+torch>=2.2
+torchvision>=0.17

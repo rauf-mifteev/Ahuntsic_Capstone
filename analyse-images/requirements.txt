@@ -1,0 +1,12 @@
+# Dépendances du service d'analyse d'images (exécution).
+# Installer avec : pip install -r requirements.txt
+#
+# Le service est une application FastAPI (voir app.py). FastAPI ne contient
+# pas de serveur HTTP : c'est uvicorn qui l'exécute, en développement comme
+# en production (voir render.yaml à la racine du dépôt).
+fastapi>=0.115
+uvicorn[standard]>=0.30        # serveur ASGI qui exécute l'application
+python-multipart>=0.0.9        # nécessaire à FastAPI pour lire un envoi multipart (une vraie photo)
+pillow>=10.0
+numpy>=1.26
+opencv-python-headless>=4.9    # utilisé par la stratégie de secours (seuillage)

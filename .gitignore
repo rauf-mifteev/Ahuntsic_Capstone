@@ -8,6 +8,11 @@ api/node_modules/
 .env.local
 api/.env
 mobile/.env
+# Toute variante de .env (.env.srv-backup, .env.prod, .env.bak...) : ces
+# fichiers finissent toujours par contenir un vrai mot de passe. Seul le
+# gabarit .env.example reste versionne.
+.env.*
+!.env.example
 
 # Build output
 dist/
@@ -29,3 +34,12 @@ Thumbs.db
 
 # Coverage
 coverage/
+
+# Python
+__pycache__/
+*.pyc
+analyse-images/.venv/
+analyse-images/.pytest_cache/
+analyse-images/jeu-de-photos-synthetique/
+analyse-images/entrainement/modele_mobilenet.pt
+analyse-images/entrainement/rapport_erreurs.json
