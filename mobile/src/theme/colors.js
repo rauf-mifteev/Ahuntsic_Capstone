@@ -1,8 +1,4 @@
-/**
- * Palette reprise telle quelle des maquettes HTML (pilulier-maquettes.html)
- * pour que l'application ait exactement le même langage visuel que ce que
- * le client a déjà vu et accepté.
- */
+
 export const colors = {
   cream: '#FAF6EC',
   creamDim: '#F1EBDB',

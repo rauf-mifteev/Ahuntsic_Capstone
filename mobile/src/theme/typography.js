@@ -1,8 +1,4 @@
-/**
- * Deux familles, comme dans les maquettes : Fraunces (titres, chaleureux,
- * lisible) et Public Sans (texte courant, très lisible en petite taille —
- * important pour le public visé, voir R-09 / WCAG 2.1 AA).
- */
+
 export const fonts = {
   heading: 'Fraunces_600SemiBold',
   body: 'PublicSans_400Regular',

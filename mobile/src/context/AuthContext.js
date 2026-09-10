@@ -4,14 +4,9 @@ import { sauvegarderJeton, lireJeton, effacerJeton } from '../api/client';
 
 const AuthContext = createContext(null);
 
-/**
- * État d'authentification global de l'application. Enveloppe toute
- * l'application (voir App.js) pour que n'importe quel écran sache si un
- * patient est connecté, sans faire transiter le jeton par les props.
- */
 export function AuthProvider({ children }) {
   const [utilisateur, setUtilisateur] = useState(null);
-  const [pret, setPret] = useState(false); // true une fois la vérification du jeton stocké terminée
+  const [pret, setPret] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -21,8 +16,7 @@ export function AuthProvider({ children }) {
           const compte = await authApi.obtenirCompteCourant();
           setUtilisateur(compte);
         } catch (err) {
-          // Jeton expiré ou invalide : on l'efface plutôt que de laisser
-          // l'application dans un état incohérent.
+
           await effacerJeton();
         }
       }

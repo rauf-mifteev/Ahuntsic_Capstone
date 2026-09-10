@@ -1,16 +1,9 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-/**
- * Client HTTP unique de l'application. Toutes les autres fonctions d'API
- * (authApi, dispositifApi, medicamentApi, ...) passent par lui, pour que
- * le jeton d'authentification soit ajouté au même endroit pour tout le
- * monde, et pour qu'un seul fichier connaisse l'URL de base de l'API.
- *
- * EXPO_PUBLIC_API_URL est la seule variable d'environnement utilisée :
- * Expo n'expose au bundle que les variables préfixées EXPO_PUBLIC_.
- */
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000/api';
+const HOTE_PAR_DEFAUT = 'localhost';
+const PORT_PAR_DEFAUT = 3000;
+const API_URL = process.env.EXPO_PUBLIC_API_URL || `http://${HOTE_PAR_DEFAUT}:${PORT_PAR_DEFAUT}/api`;
 const CLE_JETON = 'pilulier.jeton';
 
 export const client = axios.create({ baseURL: API_URL, timeout: 45000 });
@@ -35,10 +28,6 @@ export async function effacerJeton() {
   await SecureStore.deleteItemAsync(CLE_JETON);
 }
 
-/**
- * Traduit une erreur axios en message affichable, sans jamais exposer de
- * détail technique (pile d'appel, code HTTP brut) au patient.
- */
 export function messageErreur(err) {
   if (err.response?.data?.error?.message) {
     return err.response.data.error.message;

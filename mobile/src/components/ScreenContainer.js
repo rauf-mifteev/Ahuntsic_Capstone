@@ -3,7 +3,6 @@ import { View, StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from 're
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, spacing } from '../theme/colors';
 
-/** Fond et marges communs à tous les écrans, pour éviter de les répéter. */
 export default function ScreenContainer({ children, scroll = true }) {
   const Contenu = scroll ? ScrollView : View;
   return (

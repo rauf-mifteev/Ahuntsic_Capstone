@@ -5,22 +5,20 @@
     "version": "0.1.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
-    "assetBundlePatterns": [
-      "**/*"
+    "assetBundlePatterns": ["**/*"],
+    "ios": { "supportsTablet": false, "bundleIdentifier": "com.piluliercapstone.mobile" },
+    "android": { "package": "com.piluliercapstone.mobile" },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icone-notification.png",
+          "color": "#E2A23B"
+        }
+      ]
     ],
-    "ios": {
-      "supportsTablet": false,
-      "bundleIdentifier": "com.piluliercapstone.mobile"
-    },
-    "android": {
-      "package": "com.piluliercapstone.mobile"
-    },
     "extra": {
       "eas": {}
-    },
-    "plugins": [
-      "expo-font",
-      "expo-secure-store"
-    ]
+    }
   }
 }

@@ -14,3 +14,8 @@ export async function associerDispositif(identifiantDispositif) {
   const { data } = await client.post('/dispositifs/associer', { identifiantDispositif });
   return data.dispositif;
 }
+
+export async function confirmerRemplissage() {
+  const { data } = await client.post('/dispositifs/moi/confirmer-remplissage');
+  return data.dispositif;
+}

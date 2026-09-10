@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { useAuth } from '../context/AuthContext';
@@ -12,21 +12,19 @@ import DashboardScreen from '../screens/DashboardScreen';
 import CreneauxScreen from '../screens/CreneauxScreen';
 import MedicamentsScreen from '../screens/MedicamentsScreen';
 import DispositifScreen from '../screens/DispositifScreen';
+import ResultScreen from '../screens/ResultScreen';
+import RemplissageScreen from '../screens/RemplissageScreen';
+import DemoScreen from '../screens/DemoScreen';
 
 const Stack = createNativeStackNavigator();
+
+export const navigationRef = createNavigationContainerRef();
 
 const optionsEcran = {
   headerShown: false,
   contentStyle: { backgroundColor: colors.cream },
 };
 
-/**
- * Deux piles de navigation distinctes selon l'état d'authentification :
- * un patient déconnecté ne peut techniquement pas atteindre un écran qui
- * suppose un compte (F1, "une page protégée refuse l'accès"). Les autres
- * écrans (Créneaux, Médicaments, Dispositif...) sont ajoutés à la pile
- * "connecté" au fur et à mesure des tâches suivantes du sprint.
- */
 export default function AppNavigator() {
   const { estConnecte, pret } = useAuth();
 
@@ -39,7 +37,7 @@ export default function AppNavigator() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={optionsEcran}>
         {estConnecte ? (
           <>
@@ -47,6 +45,9 @@ export default function AppNavigator() {
             <Stack.Screen name="Creneaux" component={CreneauxScreen} options={{ headerShown: true, title: 'Mes moments de prise' }} />
             <Stack.Screen name="Medicaments" component={MedicamentsScreen} options={{ headerShown: true, title: 'Mes médicaments' }} />
             <Stack.Screen name="Dispositif" component={DispositifScreen} options={{ headerShown: true, title: 'Mon dispositif' }} />
+            <Stack.Screen name="Resultat" component={ResultScreen} options={{ headerShown: true, title: 'Résultat' }} />
+            <Stack.Screen name="Remplissage" component={RemplissageScreen} options={{ headerShown: true, title: 'Remplissage hebdomadaire' }} />
+            <Stack.Screen name="Demo" component={DemoScreen} options={{ headerShown: true, title: 'Démonstration en direct' }} />
           </>
         ) : (
           <>

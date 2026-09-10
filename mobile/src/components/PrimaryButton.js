@@ -31,7 +31,7 @@ export default function PrimaryButton({ label, onPress, loading, disabled, varia
 
 const styles = StyleSheet.create({
   base: {
-    minHeight: 50, // zone à toucher large (R-09)
+    minHeight: 50,
     borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',

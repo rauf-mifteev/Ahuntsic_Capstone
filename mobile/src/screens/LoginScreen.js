@@ -20,11 +20,8 @@ export default function LoginScreen({ navigation }) {
     setEnCours(true);
     try {
       await connecter(courriel.trim(), motDePasse);
-      // La navigation change automatiquement grâce à AppNavigator, qui
-      // écoute estConnecte : rien à faire ici.
+
     } catch (err) {
-      // F1 : le message ne dit jamais quel champ (courriel ou mot de
-      // passe) est fautif — on affiche tel quel le message du serveur.
       setErreur(messageErreur(err));
     } finally {
       setEnCours(false);
