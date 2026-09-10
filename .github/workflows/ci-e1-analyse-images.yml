@@ -1,0 +1,62 @@
+# Étape 1 — Service d'analyse d'images (PC-88)
+# Ce fichier se place dans .github/workflows/ à la racine du dépôt.
+# Il ne se déclenche que si la proposition de fusion touche analyse-images/.
+
+name: E1 · Service d'analyse d'images
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'analyse-images/**'
+      - '.github/workflows/ci-e1-analyse-images.yml'
+  pull_request:
+    paths:
+      - 'analyse-images/**'
+      - '.github/workflows/ci-e1-analyse-images.yml'
+
+jobs:
+  tests:
+    name: pytest (Python ${{ matrix.version-python }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version-python: ['3.13']
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Refuser tout cache Python versionné
+        run: |
+          caches=$(git ls-files | grep -E '__pycache__|\.pyc$' || true)
+          if [ -n "$caches" ]; then
+            echo "::error::Des fichiers de cache Python sont versionnés :"
+            echo "$caches"
+            echo "Correctif : git rm -r --cached <dossier>/__pycache__"
+            exit 1
+          fi
+          echo "Aucun cache Python versionné."
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.version-python }}
+          cache: 'pip'
+          cache-dependency-path: |
+            analyse-images/requirements.txt
+            analyse-images/requirements-dev.txt
+
+      - name: Installer les dépendances
+        working-directory: analyse-images
+        run: pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Lancer les tests
+        working-directory: analyse-images
+        run: pytest tests/ -q
+        env:
+          # Surtout pas "mobilenet" : le modèle entraîné a besoin de torch,
+          # qui vit dans requirements-entrainement.txt et n'est pas installé
+          # ici — l'intégration continue resterait bloquée dix minutes pour
+          # rien. La stratégie factice suffit à valider le service.
+          MODELE_STRATEGIE: factice
