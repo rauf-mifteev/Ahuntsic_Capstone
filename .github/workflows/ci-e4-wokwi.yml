@@ -1,0 +1,59 @@
+# Étape 4 — Circuit simulé (PC-91)
+#
+# Ce fichier ne simule pas le circuit : il le COMPILE. C'est déjà beaucoup —
+# une erreur de compilation est la panne la plus coûteuse à découvrir en
+# pleine démonstration.
+#
+# Il vérifie aussi une chose qu'on oublie facilement : que
+# config_locale.h.example contient bien tout ce dont main.cpp a besoin.
+# Le vrai config_locale.h est ignoré par git (il contient des valeurs
+# personnelles), donc un dépôt fraîchement cloné ne compile pas sans le
+# gabarit. Si quelqu'un ajoute un #define dans son fichier local sans
+# l'ajouter au gabarit, cette compilation échoue — et c'est voulu.
+
+name: E4 · Circuit simulé
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'wokwi/**'
+      - '.github/workflows/ci-e4-wokwi.yml'
+  pull_request:
+    paths:
+      - 'wokwi/**'
+      - '.github/workflows/ci-e4-wokwi.yml'
+
+jobs:
+  compilation:
+    name: Compiler le programme du circuit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Réutiliser la chaîne d'outils ESP32 déjà téléchargée
+        uses: actions/cache@v4
+        with:
+          path: ~/.platformio
+          key: platformio-${{ runner.os }}-${{ hashFiles('wokwi/platformio.ini') }}
+          restore-keys: platformio-${{ runner.os }}-
+
+      - name: Installer PlatformIO
+        run: pip install platformio
+
+      - name: Créer la configuration à partir du gabarit
+        working-directory: wokwi
+        run: |
+          cp src/config_locale.h.example src/config_locale.h
+          echo "config_locale.h créé à partir du gabarit."
+
+      - name: Compiler
+        working-directory: wokwi
+        run: pio run
