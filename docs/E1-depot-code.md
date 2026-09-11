@@ -2,22 +2,23 @@
 
 **GitHub** — https://github.com/rauf-mifteev/Ahuntsic_Capstone
 
-Le dépôt contient le code, le README et le dossier `docs/`. Cette semaine, il ne contient aucun code applicatif : le développement commence au sprint 1.
+Le dépôt contient le code, le README et le dossier `docs/`.
 
 Réglages en place :
 
 - branche `main` protégée ;
 - relecture par un autre membre obligatoire avant fusion ;
-- GitHub Actions configuré.
+- GitHub Actions configuré : un workflow par partie du projet, dans `.github/workflows/`.
 
-Arborescence prévue :
+Arborescence :
 
 ```
-/mobile        application React Native
-/api           serveur Node.js
-/analysis      service d'analyse d'images
-/wokwi         circuit simulé
-/docs          documentation
+/analyse-images  service d'analyse d'images (Python, FastAPI)
+/api             serveur Node.js
+/mobile          application React Native
+/wokwi           circuit simulé
+/docs            documentation
+render.yaml      les deux services déployés sur Render
 README.md
 .gitignore
 ```

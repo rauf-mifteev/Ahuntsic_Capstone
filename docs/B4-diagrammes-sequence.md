@@ -16,7 +16,7 @@ Le patient crée son compte, donne une heure à chaque créneau, enregistre ses 
 
 *Figure 4 — Le patient confirme son remplissage.*
 
-Le patient confirme dans l'application. Le boîtier allume les DEL, prend la photo, éteint les DEL et envoie l'image. Le serveur marque cette photo comme référence : elle n'est comparée à rien. Il vérifie ensuite quelles cases devraient contenir un médicament cette semaine et signale celles qui sont vides.
+Le patient confirme dans l'application. Le boîtier allume les DEL, les éteint et signale la fermeture. Le service d'analyse photographie le plateau simulé. Le serveur marque cette photo comme référence : elle n'est comparée à rien. Il vérifie ensuite quelles cases devraient contenir un médicament cette semaine et signale celles qui sont vides.
 
 ## 3. Prise normale
 
@@ -27,11 +27,11 @@ Le patient confirme dans l'application. Le boîtier allume les DEL, prend la pho
 C'est la séquence à montrer en premier au client.
 
 1. Le patient ferme le couvercle.
-2. L'ESP32 allume les 28 DEL, prend la photo, les éteint.
-3. Il envoie l'événement et l'image à l'API.
+2. L'ESP32 allume les 28 DEL, puis les éteint.
+3. Il envoie l'événement de fermeture à l'API. Il n'envoie pas d'image : le circuit simulé n'a pas de caméra.
 4. L'API vérifie que le boîtier est connu. Si non : refus et journalisation.
-5. L'API sauvegarde l'événement et la photo avant tout traitement.
-6. Le service d'analyse découpe l'image en 28 zones et classe chacune.
+5. L'API sauvegarde l'événement et la vérification avant tout traitement.
+6. Le service d'analyse photographie le plateau simulé, découpe l'image en 28 zones et classe chacune.
 7. Il compare aux 28 états de la photo précédente.
 8. Chaque case passée de pleine à vide devient une prise confirmée.
 9. L'API éteint la DEL et l'application affiche le résultat.

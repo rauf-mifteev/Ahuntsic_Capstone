@@ -12,6 +12,8 @@ Une seule base de code pour iOS et Android. Deux applications natives coûteraie
 
 Même langage que l'application mobile. Une personne qui passe du frontend au backend ne change pas de langage.
 
+Le service d'analyse d'images fait exception : il est écrit en Python avec FastAPI, parce que c'est là que vivent les bibliothèques de vision. Il est déployé à part, ce qui permet de changer de modèle sans toucher à l'API.
+
 ## Base de données
 
 **MongoDB Atlas.**
@@ -44,6 +46,8 @@ Niveaux de gris, seuil, comptage des pixels sombres dans la zone. Dix lignes de 
 
 Deux avantages. On a un système qui fonctionne dès le premier jour, avant que le modèle existe. Et on obtient un point de comparaison chiffré : pouvoir dire « le seuillage donne 91 %, le modèle donne 98 %, voici les cas où le seuillage échoue » prouve que la partie intelligente sert à quelque chose.
 
+C'est finalement cette stratégie qui tourne sur le service déployé : le modèle entraîné a besoin de PyTorch, trop lourd pour le palier gratuit de Render.
+
 ## Notifications
 
 **Notifications locales, planifiées sur le téléphone.**
@@ -52,7 +56,7 @@ Pas de service poussé. Ça évite un compte externe et la gestion de jetons d'a
 
 ## Hébergement
 
-Service infonuagique à palier gratuit pour l'API. MongoDB Atlas pour la base.
+**Render**, palier gratuit, pour l'API et pour le service d'analyse d'images. Les deux sont décrits par `render.yaml`, à la racine du dépôt. MongoDB Atlas pour la base.
 
 ## Matériel du produit final
 

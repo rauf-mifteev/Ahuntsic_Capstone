@@ -1,0 +1,63 @@
+# Étape 6 — Documentation et répétition (PC-93)
+#
+# On ne peut pas automatiser la répétition de la démonstration : elle se fait
+# à trois, devant un vrai téléphone. Ce fichier vérifie la seule chose
+# mécanique de l'étape — que les documents ne se renvoient pas vers des
+# fichiers qui n'existent plus. C'est arrivé : des documents renommés ont
+# laissé des liens morts derrière eux.
+
+name: E6 · Documentation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**/*.md'
+      - '.github/workflows/ci-e6-documentation.yml'
+  pull_request:
+    paths:
+      - '**/*.md'
+      - '.github/workflows/ci-e6-documentation.yml'
+
+jobs:
+  liens:
+    name: Liens entre documents
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Vérifier les liens relatifs
+        run: |
+          python - <<'PY'
+          import pathlib, re, sys
+          from urllib.parse import unquote
+
+          lien = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
+          casses = []
+
+          for doc in pathlib.Path(".").rglob("*.md"):
+              if "node_modules" in doc.parts or ".git" in doc.parts:
+                  continue
+              for cible in lien.findall(doc.read_text(encoding="utf-8", errors="replace")):
+                  cible = cible.split()[0].strip()
+                  if cible.startswith(("http://", "https://", "#", "mailto:")):
+                      continue
+                  chemin = unquote(cible.split("#")[0])
+                  if not chemin:
+                      continue
+                  if not (doc.parent / chemin).exists():
+                      casses.append((doc, cible))
+
+          for doc, cible in casses:
+              print(f"::error file={doc}::lien mort vers « {cible} »")
+
+          print(f"{len(casses)} lien(s) mort(s).")
+          sys.exit(1 if casses else 0)
+          PY
