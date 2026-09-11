@@ -1,9 +1,3 @@
-# Configuration de déploiement pour Render.com (palier gratuit) — PC-36.
-#
-# Render lit ce fichier à la racine du dépôt et provisionne automatiquement
-# le service décrit ci-dessous. Les valeurs marquées "sync: false" sont
-# saisies manuellement dans le tableau de bord Render (jamais dans le
-# dépôt) : c'est ce qui garantit qu'aucun secret ne se trouve dans le code.
 services:
   - type: web
     name: pilulier-api
@@ -24,3 +18,20 @@ services:
         value: 7d
       - key: CORS_ORIGIN
         value: "*"
+      - key: SERVICE_ANALYSE_URL
+
+        sync: false
+
+  - type: web
+    name: pilulier-analyse-images
+    runtime: python
+    plan: free
+    rootDir: analyse-images
+    buildCommand: pip install -r requirements.txt
+
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT --workers 1
+    healthCheckPath: /sante
+    envVars:
+      - key: MODELE_STRATEGIE
+
+        value: factice
