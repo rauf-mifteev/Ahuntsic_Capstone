@@ -34,4 +34,4 @@ services:
     envVars:
       - key: MODELE_STRATEGIE
 
-        value: factice
+        value: seuillage

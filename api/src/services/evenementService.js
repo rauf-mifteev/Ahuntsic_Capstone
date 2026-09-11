@@ -71,45 +71,44 @@ async function declencherVerification({ dispositif, identifiantDispositif, evene
     analyseEchouee: false,
   });
 
+  let resultat;
   try {
-
-    const resultat = image
+    resultat = image
       ? await comparaisonService.analyserImage(image)
       : await comparaisonService.analyserPlateauSimule(identifiantDispositif);
-    verification.etatsZones = resultat.resultats.map((r) => ({
-      indice: r.indice,
-      occupee: r.occupee,
-      score: r.score,
-    }));
-    verification.strategieUtilisee = resultat.strategie;
-
-    if (!image && resultat.image) {
-      verification.image = resultat.image;
-    }
-    await verificationRepository.sauvegarder(verification);
-
-    if (estReference) {
-
-      dispositif.prochaineFermetureEstReference = false;
-      await dispositifRepository.sauvegarder(dispositif);
-      return verification;
-    }
-
-    const comparaison = await comparaisonPlateauService.comparerEtEnregistrer(dispositifId, verification);
-
-    if (comparaison && comparaison.compartimentsVides.length > 0) {
-      await priseService.reglerDepuisComparaison(dispositifId, comparaison.compartimentsVides, verification);
-    }
-
-    return verification;
   } catch (err) {
-
     verification.analyseEchouee = true;
     // eslint-disable-next-line no-console
     console.warn("Service d'analyse indisponible, fermeture enregistrée sans vérification :", err.message);
     await verificationRepository.sauvegarder(verification);
     return verification;
   }
+
+  verification.etatsZones = resultat.resultats.map((r) => ({
+    indice: r.indice,
+    occupee: r.occupee,
+    score: r.score,
+  }));
+  verification.strategieUtilisee = resultat.strategie;
+
+  if (!image && resultat.image) {
+    verification.image = resultat.image;
+  }
+  await verificationRepository.sauvegarder(verification);
+
+  if (estReference) {
+    dispositif.prochaineFermetureEstReference = false;
+    await dispositifRepository.sauvegarder(dispositif);
+    return verification;
+  }
+
+  const comparaison = await comparaisonPlateauService.comparerEtEnregistrer(dispositifId, verification);
+
+  if (comparaison && comparaison.compartimentsVides.length > 0) {
+    await priseService.reglerDepuisComparaison(dispositifId, comparaison.compartimentsVides, verification);
+  }
+
+  return verification;
 }
 
 module.exports = { enregistrerEvenement };

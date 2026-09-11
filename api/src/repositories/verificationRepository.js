@@ -9,15 +9,6 @@ const verificationRepository = {
     return verification.save();
   },
 
-  async trouverDernierePourComparaison(dispositifId, avantMoment) {
-    return Verification.findOne({
-      dispositif: dispositifId,
-      analyseEchouee: false,
-      etatsZones: { $ne: [] },
-      moment: { $lt: avantMoment },
-    }).sort({ moment: -1 });
-  },
-
   async trouverDerniereReference(dispositifId) {
     return Verification.findOne({ dispositif: dispositifId, estReference: true }).sort({ moment: -1 });
   },
