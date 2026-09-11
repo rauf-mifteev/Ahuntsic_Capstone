@@ -1,0 +1,76 @@
+# Étape 5 — Déploiement et intégration continue (PC-92)
+#
+# Le déploiement n'a jamais été effectué : impossible de le tester ici.
+# Ce fichier vérifie donc ce qui est vérifiable — que les fichiers sont
+# lisibles, et que la contrainte de justesse la plus importante n'a pas
+# été effacée par mégarde.
+
+name: E5 · Déploiement et intégration continue
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'render.yaml'
+      - '.github/workflows/**'
+  pull_request:
+    paths:
+      - 'render.yaml'
+      - '.github/workflows/**'
+
+jobs:
+  verifications:
+    name: Fichiers de déploiement et d'intégration continue
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Installer le lecteur YAML
+        run: pip install pyyaml
+
+      - name: Vérifier que tous les fichiers YAML sont lisibles
+        run: |
+          python - <<'PY'
+          import pathlib, sys, yaml
+          fichiers = [pathlib.Path("render.yaml")]
+          fichiers += sorted(pathlib.Path(".github/workflows").glob("*.yml"))
+          fichiers += sorted(pathlib.Path(".github/workflows").glob("*.yaml"))
+          erreurs = 0
+          for f in fichiers:
+              if not f.exists():
+                  continue
+              try:
+                  yaml.safe_load(f.read_text(encoding="utf-8"))
+                  print(f"  ok   {f}")
+              except yaml.YAMLError as e:
+                  print(f"::error file={f}::YAML illisible : {e}")
+                  erreurs += 1
+          sys.exit(1 if erreurs else 0)
+          PY
+
+      - name: Vérifier la contrainte du processus unique
+        run: |
+          # L'état du plateau simulé vit dans la mémoire du processus.
+          # Avec deux processus, une requête peut tomber sur un plateau qui
+          # ignore le remplissage fait juste avant. Ce n'est pas un réglage
+          # de vitesse : c'est une contrainte de justesse.
+          if ! grep -q -- "--workers 1" render.yaml; then
+            echo "::error::render.yaml ne déclare plus le service d'analyse en un seul processus (--workers 1)."
+            exit 1
+          fi
+          echo "Le service d'analyse est bien déclaré en un seul processus."
+
+      - name: Vérifier qu'aucune adresse locale ne subsiste
+        run: |
+          if grep -nE "localhost|127\.0\.0\.1" render.yaml; then
+            echo "::error::render.yaml contient une adresse locale : elle n'existera pas une fois déployé."
+            exit 1
+          fi
+          echo "Aucune adresse locale dans render.yaml."
