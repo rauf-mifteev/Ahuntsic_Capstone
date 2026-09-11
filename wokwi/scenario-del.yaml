@@ -1,0 +1,7 @@
+name: PC-62 — guidage lumineux
+version: 1
+author: Test local
+
+steps:
+  - wait-serial: "synchronisée."
+  - delay: 25000ms

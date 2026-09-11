@@ -1,0 +1,43 @@
+name: PC-43 — coupure reseau et memoire tampon
+version: 1
+author: Test local
+
+steps:
+  - wait-serial: "synchronisée."
+  - delay: 1000ms
+
+  - set-control:
+      part-id: bouton-couvercle
+      control: pressed
+      value: 1
+  - wait-serial: "Couvercle : OUVERTURE"
+  - delay: 1500ms
+  - set-control:
+      part-id: bouton-couvercle
+      control: pressed
+      value: 0
+  - wait-serial: "Couvercle : FERMETURE"
+
+  - delay: 1500ms
+  - set-control:
+      part-id: bouton-couvercle
+      control: pressed
+      value: 1
+  - delay: 1500ms
+  - set-control:
+      part-id: bouton-couvercle
+      control: pressed
+      value: 0
+
+  - delay: 1500ms
+  - set-control:
+      part-id: bouton-couvercle
+      control: pressed
+      value: 1
+  - delay: 1500ms
+  - set-control:
+      part-id: bouton-couvercle
+      control: pressed
+      value: 0
+
+  - delay: 75000ms
