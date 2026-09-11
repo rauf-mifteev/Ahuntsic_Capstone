@@ -1,0 +1,26 @@
+name: Ouverture puis fermeture du couvercle
+version: 1
+author: Test local (PC-41 / PC-50)
+
+steps:
+
+  - wait-serial: "Synchronisation de l'heure (NTP)"
+  - wait-serial: "synchronisée."
+
+  - delay: 2000ms
+  - set-control:
+      part-id: bouton-couvercle
+      control: pressed
+      value: 1
+  - wait-serial: "Couvercle : OUVERTURE"
+  - wait-serial: "POST /evenements (OUVERTURE)"
+
+  - delay: 1500ms
+  - set-control:
+      part-id: bouton-couvercle
+      control: pressed
+      value: 0
+  - wait-serial: "Couvercle : FERMETURE"
+  - wait-serial: "POST /evenements (FERMETURE)"
+
+  - delay: 6000ms

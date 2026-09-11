@@ -30,15 +30,15 @@
 
     ["esp32:17", "resistance-creneau-2:1", "red", []],
     ["resistance-creneau-2:2", "del-creneau-2:A", "red", []],
-    ["del-creneau-2:C", "esp32:GND.4", "black", []],
+    ["del-creneau-2:C", "esp32:GND.1", "black", []],
 
     ["esp32:18", "resistance-creneau-3:1", "red", []],
     ["resistance-creneau-3:2", "del-creneau-3:A", "red", []],
-    ["del-creneau-3:C", "esp32:GND.5", "black", []],
+    ["del-creneau-3:C", "esp32:GND.2", "black", []],
 
     ["esp32:19", "resistance-creneau-4:1", "red", []],
     ["resistance-creneau-4:2", "del-creneau-4:A", "red", []],
-    ["del-creneau-4:C", "esp32:GND.6", "black", []],
+    ["del-creneau-4:C", "esp32:GND.3", "black", []],
 
     ["esp32:TX", "$serialMonitor:RX", "", []],
     ["esp32:RX", "$serialMonitor:TX", "", []]

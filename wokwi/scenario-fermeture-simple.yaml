@@ -1,0 +1,19 @@
+name: Fermeture du couvercle
+version: 1
+author: Test local
+
+steps:
+  - wait-serial: "synchronisée."
+  - delay: 2000ms
+  - set-control:
+      part-id: bouton-couvercle
+      control: pressed
+      value: 1
+  - wait-serial: "POST /evenements (OUVERTURE)"
+  - delay: 2000ms
+  - set-control:
+      part-id: bouton-couvercle
+      control: pressed
+      value: 0
+  - wait-serial: "POST /evenements (FERMETURE)"
+  - delay: 8000ms
