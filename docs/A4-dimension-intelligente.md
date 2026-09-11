@@ -4,11 +4,11 @@
 
 Notre dimension intelligente a deux parties : un objet connecté qui capte quelque chose du monde réel, et un modèle qui traite ce qu'il capte.
 
-Un interrupteur sur le couvercle détecte l'ouverture, en simulation. Le microcontrôleur est un ESP32, simulé sur Wokwi. Il envoie de vraies requêtes HTTP vers l'API en ligne. Vingt-huit DEL éclairent pour la photo et guident le patient. Une seule caméra grand angle est placée sous le plateau. Le modèle classe chacune des 28 zones de l'image en vide ou non vide.
+Un interrupteur sur le couvercle détecte l'ouverture, en simulation. Le microcontrôleur est un ESP32, simulé sur Wokwi. Il envoie de vraies requêtes HTTP vers l'API en ligne. Vingt-huit DEL éclairent pour la photo et guident le patient. Une seule caméra grand angle est prévue sous le plateau. Dans le projet, elle reste simulée : l'image des 28 zones est produite par programme à partir du plateau simulé, jamais prise par un appareil. Le détail de ce choix est dans [Pourquoi la photo du plateau est simulée](photos-simulees.md). Le modèle classe chacune des 28 zones de l'image en vide ou non vide.
 
 On utilise MobileNetV3-Small, un modèle déjà entraîné sur ImageNet, dont on réentraîne seulement les dernières couches. Il compte environ 2,5 millions de paramètres, fonctionne sans carte graphique et analyse les 28 zones en moins d'une seconde. Une seule photo donne 28 exemples étiquetés, alors une trentaine de photos suffisent.
 
-En parallèle, on écrit une version simple par seuillage avec OpenCV. Elle nous sert de point de comparaison chiffré et de solution de secours.
+En parallèle, on écrit une version simple par seuillage avec OpenCV. Elle nous sert de point de comparaison chiffré et de solution de secours. C'est elle qui tourne sur le service déployé : le modèle entraîné a besoin de PyTorch, trop lourd pour le palier gratuit de Render.
 
 ## 3.2 Réponses aux quatre questions du client
 
@@ -26,7 +26,7 @@ Oui, grâce à quatre décisions. La simulation enlève le risque matériel. Le 
 
 Que se passe-t-il si ça tombe en panne ou si ça se trompe ?
 
-Quatre cas sont prévus. Si le score est trop bas, le système affiche « ambigu » et demande une vérification : il ne tranche jamais. Le patient confirme lui-même et on garde la trace que c'était manuel. Si le service d'analyse ne répond pas, l'ouverture est enregistrée sans vérification et l'application continue de fonctionner. Si le boîtier perd la connexion, le système le détecte, prévient le patient et propose la confirmation manuelle. Si la caméra ou le modèle ne fonctionnent plus, l'interrupteur sait quand même qu'on a ouvert le couvercle, et l'application le dit clairement.
+Quatre cas sont prévus. Si le score est trop bas, le système affiche « ambigu » et demande une vérification : il ne tranche jamais. Le patient confirme lui-même et on garde la trace que c'était manuel. Si le service d'analyse ne répond pas, l'ouverture est enregistrée sans vérification et l'application continue de fonctionner. Si le boîtier perd la connexion, le système le détecte, prévient le patient et propose la confirmation manuelle. Si le service d'analyse ou le modèle ne fonctionnent plus, l'interrupteur sait quand même qu'on a ouvert le couvercle, et l'application le dit clairement.
 
 ## 3.3 Acceptation par le client
 

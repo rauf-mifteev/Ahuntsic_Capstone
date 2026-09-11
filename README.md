@@ -19,11 +19,13 @@ bien sorti de sa case, au lieu de seulement détecter l'ouverture du couvercle
 ## Structure du dépôt
 
 ```
-/api           Serveur Node.js + Express + MongoDB (API REST)
-/mobile        Application mobile React Native (Expo)
-/wokwi         Circuit ESP32 simulé sur Wokwi (C++ / Arduino)
-/docs          Documentation du projet (cahier des charges, diagrammes, etc.)
-.github/       Intégration continue (GitHub Actions)
+/api             Serveur Node.js + Express + MongoDB (API REST)
+/analyse-images  Service d'analyse d'images Python + FastAPI
+/mobile          Application mobile React Native (Expo)
+/wokwi           Circuit ESP32 simulé sur Wokwi (C++ / Arduino)
+/docs            Documentation du projet (cahier des charges, diagrammes, etc.)
+render.yaml      Les deux services déployés sur Render
+.github/         Intégration continue (GitHub Actions)
 ```
 
 ## Démarrer le projet
@@ -32,6 +34,7 @@ bien sorti de sa case, au lieu de seulement détecter l'ouverture du couvercle
 
 - Node.js 18 ou plus récent
 - npm
+- Python 3.10 ou plus récent, pour le service d'analyse d'images
 - Un compte MongoDB Atlas (palier gratuit) pour la base de données
 - Pour l'application mobile : Expo Go sur un téléphone, ou un émulateur
 
@@ -54,10 +57,29 @@ Variables d'environnement (`api/.env`) :
 | `JWT_SECRET` | Clé de signature des jetons d'authentification | (chaîne aléatoire longue) |
 | `JWT_EXPIRES_IN` | Durée de validité d'un jeton | `7d` |
 | `CORS_ORIGIN` | Origine autorisée pour l'application mobile | `*` en développement |
+| `SERVICE_ANALYSE_URL` | Adresse du service d'analyse, terminée par `/analyser` | `http://localhost:5001/analyser` |
+| `SERVICE_ANALYSE_TIMEOUT_MS` | Délai maximal accordé au service d'analyse | `9000` |
+| `SEUIL_CONFIRMATION_SCORE` | Score minimal pour confirmer une prise (RG-03) | `0.75` |
+| `DELAI_VERIFICATION_RETARD_MS` | Fréquence de détection des prises en retard | `300000` |
 
 Aucune valeur secrète n'est écrite dans le code : tout passe par ces variables
 d'environnement (`api/src/config/env.js` centralise leur lecture et leur
 validation au démarrage).
+
+### Service d'analyse d'images
+
+```bash
+cd analyse-images
+python -m venv .venv
+.venv\Scripts\Activate.ps1   # sous Windows ; sinon source .venv/bin/activate
+pip install -r requirements.txt -r requirements-dev.txt
+uvicorn app:app --reload --port 5001
+python -m pytest tests/ -q    # 45 tests
+```
+
+Le contrat HTTP est publié sur `http://localhost:5001/docs`. La stratégie de
+classification est choisie au démarrage par `MODELE_STRATEGIE` : `factice`,
+`seuillage` ou `mobilenet`. Voir `analyse-images/README.md`.
 
 ### Application mobile
 
@@ -77,30 +99,52 @@ configuration de l'URL de l'API et du mot de passe Wi-Fi simulé.
 
 ## Déploiement
 
-L'API est déployée en continu depuis la branche `main` (voir
-`docs/sprint-1/03-deploiement.md` pour la procédure détaillée et l'adresse
-publique). MongoDB Atlas héberge la base de données.
+Les deux services sont déployés sur **Render** depuis la branche `main`. Le
+fichier `render.yaml`, à la racine, les décrit tous les deux et fait référence.
+
+| Service | Adresse |
+|---|---|
+| `pilulier-api` | `https://pilulier-api.onrender.com` |
+| `pilulier-analyse-images` | `https://pilulier-analyse-images.onrender.com` |
+
+MongoDB Atlas héberge la base de données. Le palier gratuit met en veille un
+service inactif : le premier appel après quinze minutes peut prendre une
+trentaine de secondes. Les vérifications à faire avant une démonstration sont
+dans `docs/PC-71-repetition-demo.md`.
 
 ## Intégration continue
 
-Chaque *push* et chaque *pull request* déclenchent `.github/workflows/ci.yml` :
-installation des dépendances de l'API et exécution de la suite de tests Jest.
-Une pull request ne peut pas être fusionnée dans `main` si la CI échoue (voir
-la section « Réglages GitHub » ci-dessous).
+Un workflow par partie du projet, dans `.github/workflows/`. Chacun ne se
+déclenche que sur les fichiers qui le concernent, pour qu'une pull request
+n'exécute que ce qui est utile.
+
+| Fichier | Ce qu'il contrôle | Se déclenche sur |
+|---|---|---|
+| `ci-e1-analyse-images.yml` | pytest du service d'analyse | `analyse-images/**` |
+| `ci-e2-api.yml` | Jest de l'API | `api/**` |
+| `ci-e3-mobile.yml` | lint de l'application mobile | `mobile/**` |
+| `ci-e4-wokwi.yml` | compilation du firmware | `wokwi/**` |
+| `ci-e5-deploiement.yml` | cohérence du déploiement | `render.yaml`, `.github/workflows/**` |
+| `ci-e6-documentation.yml` | liens entre les documents | `**/*.md` |
+
+Une pull request ne peut pas être fusionnée dans `main` si un contrôle échoue
+(voir la section « Réglages GitHub » ci-dessous).
 
 ## Réglages GitHub (à faire une fois, dans les paramètres du dépôt)
 
 1. **Settings → Branches → Add branch protection rule** sur `main`.
 2. Cocher *Require a pull request before merging* et *Require approvals* (≥ 1).
-3. Cocher *Require status checks to pass before merging*, puis sélectionner le
-   check `test` (celui défini dans `ci.yml`).
+3. Cocher *Require status checks to pass before merging*, puis sélectionner les
+   contrôles des workflows listés ci-dessus. Un contrôle n'apparaît dans cette
+   liste qu'après s'être exécuté au moins une fois.
 4. Cocher *Do not allow bypassing the above settings* si l'option est offerte.
 
 ## Documentation
 
-Le dossier `docs/` (au sens du plan de documentation, section D5) contient les
-livrables du projet. La documentation de conception (Partie A, diagrammes,
-etc.) provient des livrables du Sprint 0 et est versionnée séparément.
+Le dossier `docs/` (au sens du plan de documentation, section D5) contient tous
+les livrables du projet, cadrage et diagrammes compris. Commencer par
+`docs/README.md`, qui les indexe, puis `docs/FONCTIONNEMENT-vue-ensemble.md`
+pour comprendre comment les morceaux s'assemblent.
 
 ## Outils d'IA utilisés
 

@@ -6,9 +6,9 @@
 
 ## Les composants
 
-**Le boîtier.** Prend les photos, les envoie au serveur, garde en mémoire ce qu'il n'a pas pu envoyer. Il garde aussi une copie des heures des quatre créneaux, ce qui lui permet d'allumer la bonne DEL sans réseau.
+**Le boîtier.** Signale l'ouverture et la fermeture du couvercle, et garde en mémoire ce qu'il n'a pas pu envoyer. Il ne prend pas de photo : le circuit est simulé sur Wokwi et n'a pas de caméra. Il garde aussi une copie des heures des quatre créneaux, ce qui lui permet d'allumer la bonne DEL sans réseau.
 
-**Le serveur.** Il contient trois choses : l'API REST, le service d'analyse d'images, et la base de données. C'est lui qui garde les vraies données.
+**Le serveur.** Trois choses, déployées séparément : l'API REST (`pilulier-api`), le service d'analyse d'images (`pilulier-analyse-images`) et la base de données MongoDB Atlas. C'est lui qui garde les vraies données.
 
 **Le téléphone.** Affiche les résultats et planifie les rappels. Il a une copie locale, mais rien d'unique.
 
@@ -19,7 +19,7 @@
 | Boîtier | API | HTTPS, avec l'identifiant du boîtier |
 | API | Boîtier | HTTPS, pour les heures des créneaux et les DEL |
 | Application | API | HTTPS avec jeton d'authentification |
-| API | Service d'analyse | HTTP interne : une image entre, 28 résultats sortent |
+| API | Service d'analyse | HTTPS : une image ou un identifiant de dispositif entre, 28 résultats sortent |
 | API | Base de données | Pilote MongoDB |
 
 Le boîtier et le téléphone ne se parlent jamais directement. Chacun parle au serveur.
@@ -42,6 +42,6 @@ On peut développer l'application avec un faux service qui retourne des résulta
 
 **Réseau ou serveur coupé** — le boîtier garde tout en mémoire et le renvoie plus tard avec l'heure d'origine.
 
-**Caméra ou modèle en panne** — l'interrupteur sait quand même que le couvercle a été ouvert. L'application le dit et propose au patient de confirmer lui-même.
+**Service d'analyse en panne** — l'interrupteur sait quand même que le couvercle a été ouvert. L'application le dit et propose au patient de confirmer lui-même.
 
 Les patrons de conception retenus sont dans [B6 · Patrons de conception](B6-patrons-conception.md).

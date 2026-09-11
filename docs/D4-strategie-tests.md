@@ -18,7 +18,7 @@ Tests manuels sur un vrai téléphone, iOS et Android, une fois par sprint.
 
 Outils
 
-Jest pour les tests unitaires et d'intégration. GitHub Actions pour les lancer automatiquement.
+Jest pour l'API et l'application mobile. pytest pour le service d'analyse d'images. GitHub Actions pour les lancer automatiquement : un workflow par partie du projet, dans `.github/workflows/`, chacun déclenché seulement par les fichiers qui le concernent.
 
 Comment on travaille
 

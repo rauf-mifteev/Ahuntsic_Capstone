@@ -72,7 +72,7 @@ Les piluliers connectés du marché servent de référence. Ils détectent l'ouv
 
 Il mesure environ 22 × 12 × 6 cm, couvercle fermé. Le plateau contient 28 cases : 7 colonnes pour les jours, 4 rangées pour les moments de prise. Chaque case fait environ 3 × 2,5 × 2 cm.
 
-Une case correspond à un jour et à une rangée, pas à un médicament. Les rangées n'ont pas d'heure fixe au départ : le patient donne une heure à chacune quand il configure son pilulier, puis il place chaque médicament dans la rangée qui correspond à son heure. Deux médicaments pris à des heures différentes ne vont jamais dans la même case. C'est ce qui permet de savoir si une prise a eu lieu au bon moment. Deux médicaments pris à la même heure vont ensemble : le système n'a pas besoin de les distinguer.
+Une case correspond à un jour et à une rangée, pas à un médicament. Les rangées n'ont pas d'heure fixe au départ : le patient donne une heure à chacune quand il configure son pilulier, puis il place chaque médicament dans les rangées qui correspondent à ses heures de prise : un médicament pris matin et soir occupe deux rangées. Deux médicaments pris à des heures différentes ne vont jamais dans la même case. C'est ce qui permet de savoir si une prise a eu lieu au bon moment. Deux médicaments pris à la même heure vont ensemble : le système n'a pas besoin de les distinguer.
 
 Le plateau a un seul couvercle, avec un seul interrupteur qui détecte la fermeture. Vingt-huit petits couvercles auraient voulu dire 28 charnières qui peuvent briser. Et un couvercle de 3 cm est difficile à ouvrir pour une personne âgée.
 
@@ -151,7 +151,7 @@ Acteurs : Patient.
 Résultat : le mot de passe est haché. Une connexion réussie ouvre le tableau de bord. Un identifiant erroné donne un message qui ne dit pas quel champ est fautif. Les routes protégées refusent une requête sans jeton.
 
 F2 — Configuration du traitement
-Description : le patient donne une heure à chaque rangée, enregistre ses médicaments et les place dans la bonne rangée.
+Description : le patient donne une heure à chaque rangée, enregistre ses médicaments et les place dans les rangées qui correspondent à leurs heures de prise.
 Acteurs : Patient.
 Résultat : les prises attendues sont créées pour sept jours. Deux médicaments pris à des heures différentes ne peuvent pas aller dans la même rangée. Maximum quatre heures différentes par jour.
 

@@ -10,9 +10,11 @@ Si le Drive et `docs/` se contredisent, c'est `docs/` qui fait foi.
 
 ## Environnement déployé
 
-**Application** — [À REMPLIR : adresse publique, disponible à partir du sprint 1]
+**API** — `https://pilulier-api.onrender.com`
 
-Cette semaine, rien n'est déployé. La mise en ligne fait partie du sprint 1.
+**Service d'analyse d'images** — `https://pilulier-analyse-images.onrender.com`
+
+Les deux sont déployés sur Render depuis le 10 septembre, décrits par le fichier `render.yaml` à la racine du dépôt. L'application mobile se lance avec Expo Go : elle n'a pas d'adresse publique.
 
 ## Communication
 

@@ -45,4 +45,25 @@ Un fichier par livrable. Le nom du fichier commence par le code du livrable.
 - **E2** — [Projet de gestion](E2-projet-gestion.md)
 - **E3** — [Espace de documentation](E3-espace-documentation.md)
 
+## F — Notes de sprint
 
+Décisions et procédures produites pendant les sprints, en complément des
+livrables A à E.
+
+- **PC-51** — [Pourquoi la photo du plateau est simulée](photos-simulees.md)
+- **PC-71** — [Répétition de la démonstration](PC-71-repetition-demo.md)
+
+## G — Comment ça marche
+
+Documents écrits pour quelqu'un qui découvre le projet.
+
+- [Vue d'ensemble](FONCTIONNEMENT-vue-ensemble.md) — commencer par là
+- [Le service d'analyse d'images](FONCTIONNEMENT-service-analyse.md)
+- [L'API](FONCTIONNEMENT-api.md)
+- [L'application mobile](FONCTIONNEMENT-mobile.md)
+- [Le circuit simulé](FONCTIONNEMENT-circuit-wokwi.md)
+
+## H — Installation et suivi
+
+- [Installer et faire tourner le projet](INSTALLATION-EQUIPE.md)
+- [Ce qui a changé, et pourquoi](CHANGEMENTS-ET-JUSTIFICATIONS.md)
