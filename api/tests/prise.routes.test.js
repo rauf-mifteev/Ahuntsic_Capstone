@@ -1,9 +1,11 @@
 jest.mock('../src/services/authService');
 jest.mock('../src/services/priseService');
+jest.mock('../src/repositories/utilisateurRepository');
 
 const request = require('supertest');
 const authService = require('../src/services/authService');
 const priseService = require('../src/services/priseService');
+const utilisateurRepository = require('../src/repositories/utilisateurRepository');
 const createApp = require('../src/app');
 
 const app = createApp();
@@ -37,6 +39,38 @@ describe('GET /api/prises', () => {
     await request(app).get('/api/prises?date=2026-09-01').set('Authorization', 'Bearer x');
 
     expect(priseService.listerPourUtilisateurEtDate).toHaveBeenCalledWith('u1', '2026-09-01');
+  });
+
+  it("utilise le jour du PATIENT, pas celui d'UTC, quand UTC est déjà au lendemain", async () => {
+    // 2026-07-16T01:00:00Z = 15 juillet, 21h00 à Toronto (EDT, UTC-4) :
+    // encore "aujourd'hui" pour le patient, déjà "demain" en UTC.
+    jest.useFakeTimers().setSystemTime(new Date('2026-07-16T01:00:00Z'));
+
+    utilisateurRepository.trouverParId.mockResolvedValue({ fuseauHoraire: 'America/Toronto' });
+    priseService.listerPourUtilisateurEtDate.mockResolvedValue([]);
+
+    await request(app).get('/api/prises').set('Authorization', 'Bearer x');
+
+    expect(priseService.listerPourUtilisateurEtDate).toHaveBeenCalledWith('u1', '2026-07-15');
+
+    jest.useRealTimers();
+  });
+
+  it("retombe sur le fuseau par défaut si l'utilisateur est introuvable, sans faire planter la requête", async () => {
+    jest.useFakeTimers().setSystemTime(new Date('2026-07-16T01:00:00Z'));
+
+    utilisateurRepository.trouverParId.mockRejectedValue(new Error('Cast to ObjectId failed'));
+    priseService.listerPourUtilisateurEtDate.mockResolvedValue([]);
+
+    const res = await request(app).get('/api/prises').set('Authorization', 'Bearer x');
+
+    expect(res.status).toBe(200);
+    expect(priseService.listerPourUtilisateurEtDate).toHaveBeenCalledWith(
+      'u1',
+      expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/)
+    );
+
+    jest.useRealTimers();
   });
 });
 
