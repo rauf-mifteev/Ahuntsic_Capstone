@@ -26,6 +26,15 @@ const priseRepository = {
     return Prise.find({ dispositif: dispositifId, date }).sort({ compartimentIndice: 1 });
   },
 
+  async listerParPeriodePourDispositif(dispositifId, dateDebut, dateFin) {
+    // Les dates sont des chaînes « AAAA-MM-JJ » : leur ordre alphabétique est
+    // leur ordre chronologique, donc une comparaison de chaînes suffit.
+    return Prise.find({
+      dispositif: dispositifId,
+      date: { $gte: dateDebut, $lte: dateFin },
+    }).sort({ date: 1, compartimentIndice: 1 });
+  },
+
   async trouverPrisesDuesPourOuverture(dispositifId, maintenant) {
     return Prise.find({ dispositif: dispositifId, statut: 'PREVUE', heurePrevue: { $lte: maintenant } });
   },
