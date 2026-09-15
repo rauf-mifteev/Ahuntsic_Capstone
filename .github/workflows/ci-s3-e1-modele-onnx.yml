@@ -1,0 +1,105 @@
+# Sprint 3, étape 1 — Le modèle entraîné exécuté par ONNX Runtime
+#
+# Le service déployé ne peut pas entraîner : il n'a ni PyTorch, ni disque
+# persistant. Le modèle doit donc venir du dépôt, et être utilisable sans
+# PyTorch. Ce fichier vérifie exactement ces deux choses, plus le fait que
+# le modèle reconnaît réellement la bonne case.
+
+name: S3 E1 · Modèle ONNX
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'analyse-images/**'
+      - '.github/workflows/ci-s3-e1-modele-onnx.yml'
+  pull_request:
+    paths:
+      - 'analyse-images/**'
+      - '.github/workflows/ci-s3-e1-modele-onnx.yml'
+
+jobs:
+  modele:
+    name: Le modèle ONNX est livré et fonctionne
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Le modèle ONNX est bien versionné
+        run: |
+          fichier=analyse-images/entrainement/modele_mobilenet.onnx
+          if [ ! -f "$fichier" ]; then
+            echo "::error::$fichier est absent du dépôt. Le service déployé ne peut pas entraîner : le modèle doit être versionné."
+            exit 1
+          fi
+          octets=$(stat -c%s "$fichier")
+          echo "Taille du modèle : $((octets / 1024 / 1024)) Mo"
+          if [ "$octets" -gt 26214400 ]; then
+            echo "::error::Le modèle dépasse 25 Mo. Vérifier l'export avant de le versionner."
+            exit 1
+          fi
+
+      - name: Aucun modèle PyTorch versionné
+        run: |
+          # Le .pt est le format de travail de l'entraînement. Il pèse autant
+          # que le .onnx et ne sert à rien en ligne.
+          if git ls-files | grep -E '\.pt$'; then
+            echo "::error::Un fichier .pt est versionné. Seul le .onnx doit l'être."
+            exit 1
+          fi
+          echo "Aucun fichier .pt versionné."
+
+      - name: Installer les dépendances du service
+        working-directory: analyse-images
+        run: pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Le modèle tourne sans PyTorch
+        working-directory: analyse-images
+        run: |
+          python - <<'PY'
+          import importlib.util, sys
+
+          # Si torch était installé, le test ne prouverait rien : on veut
+          # justement démontrer que le service tourne sans lui.
+          if importlib.util.find_spec("torch") is not None:
+              print("::error::torch est installé dans cet environnement : le test ne prouve plus rien.")
+              sys.exit(1)
+
+          sys.path.insert(0, ".")
+          sys.path.insert(0, "entrainement")
+          from generer_jeu_synthetique import generer_plateau
+          from strategies.onnx import ClassifieurOnnx
+          from zones import NB_ZONES
+
+          CASE_VIDE = 12
+
+          etats = [True] * NB_ZONES
+          etats[CASE_VIDE] = False
+          image = generer_plateau(7, etats)
+
+          resultats = ClassifieurOnnx().analyser(image)
+
+          if len(resultats) != NB_ZONES:
+              print(f"::error::{NB_ZONES} résultats attendus, {len(resultats)} reçus.")
+              sys.exit(1)
+
+          vides = [r.indice for r in resultats if not r.occupee]
+          if vides != [CASE_VIDE]:
+              print(f"::error::Le modèle devrait trouver la seule case vide ({CASE_VIDE}), il a trouvé {vides}.")
+              sys.exit(1)
+
+          print(f"Le modèle a trouvé la case vide {CASE_VIDE}, et elle seule, sur {NB_ZONES} zones.")
+          PY
+
+      - name: Tests du service
+        working-directory: analyse-images
+        env:
+          MODELE_STRATEGIE: factice
+        run: python -m pytest tests/ -q
