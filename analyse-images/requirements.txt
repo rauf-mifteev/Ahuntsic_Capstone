@@ -10,3 +10,4 @@ python-multipart>=0.0.9        # nécessaire à FastAPI pour lire un envoi multi
 pillow>=10.0
 numpy>=1.26
 opencv-python-headless>=4.9    # utilisé par la stratégie de secours (seuillage)
+onnxruntime>=1.17              # exécute le modèle entraîné sans PyTorch (stratégie onnx, service déployé)

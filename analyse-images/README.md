@@ -174,6 +174,7 @@ Variable d'environnement `MODELE_STRATEGIE` :
 | `factice` (défaut) | Résultat déterministe, sans regarder l'image. Sert à développer l'API avant que le modèle existe (AC de PC-47). | aucune |
 | `seuillage` | Vrai classifieur : convertit chaque zone en niveaux de gris et compte les pixels sombres (OpenCV). Fonctionne dès le premier jour, sans entraînement. **C'est celui à utiliser en démonstration.** | `opencv-python-headless` |
 | `mobilenet` | Le modèle entraîné (section 5). Nécessite `entrainement/modele_mobilenet.pt`. | `torch`, `torchvision` |
+| `onnx` | **Le même modèle entraîné, exécuté sans PyTorch** (section 5.4). Nécessite `entrainement/modele_mobilenet.onnx`. **C'est la stratégie du service déployé.** | `onnxruntime` |
 
 ```powershell
 $env:MODELE_STRATEGIE = "seuillage"; python app.py
@@ -243,7 +244,54 @@ après `modele.train()` : mêmes statistiques des deux côtés. C'est la
 pratique standard quand on gèle un backbone pré-entraîné, et c'est
 commenté dans le code à l'endroit exact.
 
-### 5.4 Mesurer les erreurs séparément
+### 5.4 Exporter le modèle pour le service déployé
+
+Le service en ligne ne peut pas embarquer PyTorch. Le palier gratuit de
+Render donne **512 Mo de mémoire**, et PyTorch pèse à lui seul environ
+500 Mo — 2,5 Go avec ses dépendances. TensorFlow, environ 550 Mo, ne tient
+pas davantage. **ONNX Runtime pèse environ 16 Mo.**
+
+D'où la règle du projet : on **entraîne** avec PyTorch, en local, et on
+**exécute** avec ONNX Runtime, en ligne. Mêmes poids, mêmes verdicts, seul
+le moteur change.
+
+```powershell
+python entrainement/exporter_onnx.py
+```
+
+Le script écrit `entrainement/modele_mobilenet.onnx`, puis **vérifie la
+parité** entre les deux moteurs sur toutes les images du jeu de test. Il
+compare deux choses : l'écart numérique maximal entre les sorties, qui
+doit rester sous `1e-3`, et le nombre de zones où la décision diffère, qui
+doit être zéro. C'est ce second chiffre qui protège vraiment : deux moteurs
+différents s'écartent toujours un peu en float32, alors qu'un défaut de
+prétraitement donne un écart de l'ordre de `1e-1` et change des décisions. Si l'une des deux échoue, le script s'arrête en erreur et
+demande de ne pas versionner le fichier.
+
+Cette vérification n'est pas une précaution de confort. Un export
+silencieusement faux — mauvaise taille d'entrée, normalisation différente,
+classes inversées — donnerait un service qui répond n'importe quoi **sans
+jamais lever d'erreur**.
+
+Pour utiliser le modèle exporté :
+
+```powershell
+$env:MODELE_STRATEGIE = "onnx"; python app.py
+```
+
+`GET /sante` répond alors :
+
+```json
+{"etat":"ok","strategie":"mobilenet-onnx"}
+```
+
+> **Le fichier `.onnx` est versionné, contrairement au `.pt`.** L'hébergeur
+> ne peut pas entraîner le modèle — il n'a ni PyTorch ni le jeu de données
+> — et son disque n'est pas persistant. Le fichier doit donc se trouver
+> dans le dépôt pour arriver en ligne. Le `.pt`, lui, reste ignoré par Git :
+> il se régénère en quelques minutes avec `entrainer_mobilenet.py`.
+
+### 5.5 Mesurer les erreurs séparément
 
 ```powershell
 python entrainement/mesurer_erreurs.py

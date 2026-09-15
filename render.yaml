@@ -34,4 +34,4 @@ services:
     envVars:
       - key: MODELE_STRATEGIE
 
-        value: seuillage
+        value: onnx
