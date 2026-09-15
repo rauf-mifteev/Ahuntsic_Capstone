@@ -15,6 +15,7 @@ import DispositifScreen from '../screens/DispositifScreen';
 import ResultScreen from '../screens/ResultScreen';
 import RemplissageScreen from '../screens/RemplissageScreen';
 import DemoScreen from '../screens/DemoScreen';
+import HistoriqueScreen from '../screens/HistoriqueScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -47,6 +48,7 @@ export default function AppNavigator() {
             <Stack.Screen name="Dispositif" component={DispositifScreen} options={{ headerShown: true, title: 'Mon dispositif' }} />
             <Stack.Screen name="Resultat" component={ResultScreen} options={{ headerShown: true, title: 'Résultat' }} />
             <Stack.Screen name="Remplissage" component={RemplissageScreen} options={{ headerShown: true, title: 'Remplissage hebdomadaire' }} />
+            <Stack.Screen name="Historique" component={HistoriqueScreen} options={{ headerShown: true, title: 'Mon historique' }} />
             <Stack.Screen name="Demo" component={DemoScreen} options={{ headerShown: true, title: 'Démonstration en direct' }} />
           </>
         ) : (
