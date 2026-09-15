@@ -68,7 +68,10 @@ se désynchroniser du code.
 
 La stratégie active (patron Stratégie, voir docs/B6-patrons-conception.md)
 est choisie UNE FOIS au démarrage, via la variable d'environnement
-MODELE_STRATEGIE (factice | seuillage | mobilenet — défaut : factice).
+MODELE_STRATEGIE (factice | seuillage | mobilenet | onnx — défaut :
+factice). C'est `onnx` qui tourne sur le service déployé : même modèle
+que `mobilenet`, mais exécuté sans PyTorch, trop lourd pour l'hébergement
+gratuit.
 """
 import base64
 import io
@@ -123,9 +126,14 @@ def construire_classifieur(nom_strategie: str) -> Classifieur:
         from strategies.mobilenet import ClassifieurMobileNet
 
         return ClassifieurMobileNet()
+    if nom_strategie == "onnx":
+        from strategies.onnx import ClassifieurOnnx
+
+        return ClassifieurOnnx()
 
     raise ValueError(
-        f"MODELE_STRATEGIE invalide : {nom_strategie!r} (valeurs acceptées : factice, seuillage, mobilenet)"
+        f"MODELE_STRATEGIE invalide : {nom_strategie!r} "
+        "(valeurs acceptées : factice, seuillage, mobilenet, onnx)"
     )
 
 def creer_app(classifieur: Classifieur = None) -> FastAPI:

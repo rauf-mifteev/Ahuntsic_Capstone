@@ -99,8 +99,44 @@ def rapport_texte(metriques: dict) -> str:
         f"  Zones évaluées                    : {metriques['total_zones']}"
     )
 
+def construire_classifieur(nom_strategie: str):
+    """
+    Renvoie la stratégie demandée. Le défaut reste `seuillage` : c'est la
+    seule qui ne demande ni entraînement ni dépendance lourde, et c'est
+    elle que ce script mesurait depuis le début.
+    """
+    if nom_strategie == "seuillage":
+        from strategies.seuillage import ClassifieurSeuillage
+
+        return ClassifieurSeuillage()
+    if nom_strategie == "mobilenet":
+        from strategies.mobilenet import ClassifieurMobileNet
+
+        return ClassifieurMobileNet()
+    if nom_strategie == "onnx":
+        from strategies.onnx import ClassifieurOnnx
+
+        return ClassifieurOnnx()
+
+    raise SystemExit(
+        f"Stratégie inconnue : {nom_strategie!r} (valeurs acceptées : seuillage, mobilenet, onnx)"
+    )
+
+
 if __name__ == "__main__":
-    from strategies.seuillage import ClassifieurSeuillage
+    import argparse
+
+    analyseur = argparse.ArgumentParser(
+        description="Mesure les erreurs d'une stratégie de classification, "
+        "séparément dans les deux sens."
+    )
+    analyseur.add_argument(
+        "--strategie",
+        default="seuillage",
+        choices=["seuillage", "mobilenet", "onnx"],
+        help="Stratégie à mesurer (défaut : seuillage).",
+    )
+    arguments = analyseur.parse_args()
 
     racine = Path(__file__).resolve().parent.parent
     dossier_test = racine / "jeu-de-photos" / "test"
@@ -113,7 +149,7 @@ if __name__ == "__main__":
         generer_jeu(racine / "jeu-de-photos-synthetique")
         exemples = charger_sous_ensemble(racine / "jeu-de-photos-synthetique" / "test")
 
-    classifieur = ClassifieurSeuillage()
+    classifieur = construire_classifieur(arguments.strategie)
     resultat = choisir_seuil(classifieur, exemples)
     print(f"Stratégie évaluée : {classifieur.nom}")
     print(rapport_texte(resultat))

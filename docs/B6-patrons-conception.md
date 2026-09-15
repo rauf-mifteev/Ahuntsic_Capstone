@@ -12,7 +12,7 @@ Trois patrons, choisis parce qu'ils règlent un problème précis de ce projet. 
 
 **Où** — le service d'analyse d'images.
 
-**Pourquoi** — un seul contrat, deux implémentations : le faux service et le vrai modèle. On branche l'un ou l'autre sans changer l'API. C'est ce qui permet à trois personnes de travailler en même temps sans s'attendre.
+**Pourquoi** — un seul contrat, quatre implémentations : le faux service, le seuillage, le modèle entraîné sous PyTorch, et le même modèle exécuté par ONNX Runtime. On branche l'une ou l'autre sans changer l'API. C'est ce qui permet à trois personnes de travailler en même temps sans s'attendre, et c'est ce qui a permis de changer de moteur pour le déploiement : `mobilenet` et `onnx` exécutent le MÊME modèle, sans que rien d'autre ne bouge.
 
 ### Observateur (Observer)
 

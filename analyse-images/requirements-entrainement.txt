@@ -6,3 +6,4 @@
 # Installer avec : pip install -r requirements.txt -r requirements-entrainement.txt
 torch>=2.2
 torchvision>=0.17
+onnx>=1.16                     # demandé par torch.onnx.export (export seulement, pas l'exécution)
