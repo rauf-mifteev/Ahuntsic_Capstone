@@ -5,6 +5,11 @@ export async function listerPrisesDuJour(date) {
   return data.prises;
 }
 
+export async function obtenirHistorique(jours = 7) {
+  const { data } = await client.get('/prises/historique', { params: { jours } });
+  return data.historique;
+}
+
 export async function obtenirPrise(priseId) {
   const { data } = await client.get(`/prises/${priseId}`);
   return data.prise;

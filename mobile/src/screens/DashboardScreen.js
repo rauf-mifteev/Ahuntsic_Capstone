@@ -1,17 +1,30 @@
-import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import React, { useCallback, useRef, useState } from 'react';
+import { View, Text, StyleSheet, Pressable, RefreshControl } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import ScreenContainer from '../components/ScreenContainer';
 import PrimaryButton from '../components/PrimaryButton';
 import { useAuth } from '../context/AuthContext';
-import { listerPrisesDuJour } from '../api/priseApi';
+import { listerPrisesDuJour, obtenirHistorique } from '../api/priseApi';
 import { obtenirMonDispositif } from '../api/dispositifApi';
 import { listerMedicaments } from '../api/medicamentApi';
 import { creneauxDe } from '../api/creneaux';
 import { planifierRappelsPourAujourdhui } from '../notifications/planificateur';
 import { colors, spacing, radius } from '../theme/colors';
 import { fonts, fontSizes } from '../theme/typography';
+
+// Toutes les 10 secondes : assez rapide pour qu'un changement de statut se
+// voie pendant une démonstration, assez lent pour ne pas épuiser la batterie
+// ni réveiller l'hébergement gratuit sans raison.
+const DELAI_SONDAGE_MS = 10000;
+
+const JOURS_ADHERENCE = 7;
+
+function formaterTaux(taux) {
+  // null = aucune prise réglée sur la période. Afficher 0 % serait faux.
+  if (taux === null || taux === undefined) return '—';
+  return `${Math.round(taux * 100)} %`;
+}
 
 const BADGE_PAR_STATUT = {
   PREVUE: { texte: 'À venir', couleur: colors.inkSoft, fond: colors.creamDim, icone: 'time-outline' },
@@ -25,53 +38,87 @@ export default function DashboardScreen({ navigation }) {
   const { utilisateur, deconnecter } = useAuth();
   const [prises, setPrises] = useState([]);
   const [infosParCompartiment, setInfosParCompartiment] = useState({});
+  const [adherence, setAdherence] = useState(null);
+  const [rafraichissement, setRafraichissement] = useState(false);
+
+  // Sert à ignorer une réponse qui arrive après qu'on a quitté l'écran.
+  const ecranAffiche = useRef(false);
+
+  // Un seul chargement, utilisé par les trois chemins : arrivée sur l'écran,
+  // sondage périodique, et geste de l'utilisateur.
+  const chargerDonnees = useCallback(async ({ planifierLesRappels = true } = {}) => {
+    try {
+      const [prisesDuJour, dispositif, medicaments, historique] = await Promise.all([
+        listerPrisesDuJour(),
+        obtenirMonDispositif(),
+        listerMedicaments(),
+        // L'historique est un bonus d'affichage : s'il échoue, le tableau de
+        // bord doit rester utilisable.
+        obtenirHistorique(JOURS_ADHERENCE).catch(() => null),
+      ]);
+      if (!ecranAffiche.current) return;
+
+      setPrises(prisesDuJour);
+      setAdherence(historique ? historique.resume : null);
+
+      const parCompartiment = {};
+      dispositif.compartiments.forEach((c) => {
+        const noms = medicaments
+          .filter((m) => creneauxDe(m).includes(c.creneau) && m.joursSemaine.includes(c.jourSemaine))
+          .map((m) => m.nom)
+          .join(', ');
+        parCompartiment[c.indice] = { noms, creneau: c.creneau };
+      });
+      setInfosParCompartiment(parCompartiment);
+
+      // Les rappels ne sont replanifiés qu'à l'arrivée sur l'écran : les
+      // reprogrammer à chaque sondage annulerait et recréerait les
+      // notifications toutes les dix secondes.
+      if (planifierLesRappels) {
+        planifierRappelsPourAujourdhui(prisesDuJour, parCompartiment).catch((err) => {
+          // eslint-disable-next-line no-console
+          console.warn('Rappels non programmés :', err?.message || err);
+        });
+      }
+    } catch (err) {
+      // Chargement du tableau de bord : erreur ignorée volontairement,
+      // l'écran reste utilisable même si prises/dispositif/médicaments
+      // ne se chargent pas (ex. hors-ligne). Le prochain sondage réessaiera.
+    }
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
-      let ignorer = false;
+      ecranAffiche.current = true;
+      chargerDonnees();
 
-      (async () => {
-        try {
-          const [prisesDuJour, dispositif, medicaments] = await Promise.all([
-            listerPrisesDuJour(),
-            obtenirMonDispositif(),
-            listerMedicaments(),
-          ]);
-          if (ignorer) return;
-
-          setPrises(prisesDuJour);
-
-          const parCompartiment = {};
-          dispositif.compartiments.forEach((c) => {
-            const noms = medicaments
-              .filter((m) => creneauxDe(m).includes(c.creneau) && m.joursSemaine.includes(c.jourSemaine))
-              .map((m) => m.nom)
-              .join(', ');
-            parCompartiment[c.indice] = { noms, creneau: c.creneau };
-          });
-          setInfosParCompartiment(parCompartiment);
-
-          planifierRappelsPourAujourdhui(prisesDuJour, parCompartiment).catch((err) => {
-
-            // eslint-disable-next-line no-console
-            console.warn('Rappels non programmés :', err?.message || err);
-          });
-        } catch (err) {
-          // Chargement du tableau de bord : erreur ignorée volontairement,
-          // l'écran reste utilisable même si prises/dispositif/médicaments
-          // ne se chargent pas (ex. hors-ligne).
-
-        }
-      })();
+      // Sans ce sondage, un statut qui change pendant qu'on regarde l'écran
+      // ne s'afficherait qu'au prochain retour sur l'écran.
+      const intervalle = setInterval(() => {
+        chargerDonnees({ planifierLesRappels: false });
+      }, DELAI_SONDAGE_MS);
 
       return () => {
-        ignorer = true;
+        ecranAffiche.current = false;
+        clearInterval(intervalle);
       };
-    }, [])
+    }, [chargerDonnees])
   );
 
+  // Geste « tirer pour rafraîchir » : l'utilisateur n'attend pas le prochain
+  // sondage.
+  const rafraichirALaMain = useCallback(async () => {
+    setRafraichissement(true);
+    await chargerDonnees({ planifierLesRappels: false });
+    setRafraichissement(false);
+  }, [chargerDonnees]);
+
   return (
-    <ScreenContainer>
+    <ScreenContainer
+      refreshControl={
+        <RefreshControl refreshing={rafraichissement} onRefresh={rafraichirALaMain} tintColor={colors.inkSoft} />
+      }
+    >
       <Text style={styles.eyebrow}>Tableau de bord</Text>
       <Text style={styles.titre}>Bonjour</Text>
       <Text style={styles.sousTitre}>{utilisateur?.courriel}</Text>
@@ -102,6 +149,15 @@ export default function DashboardScreen({ navigation }) {
         </View>
       )}
 
+      <Pressable style={styles.carteAdherence} onPress={() => navigation.navigate('Historique')}>
+        <View style={styles.adherenceTexte}>
+          <Text style={styles.carteTitre}>Mon adhérence</Text>
+          <Text style={styles.adherenceLegende}>Sur les {JOURS_ADHERENCE} derniers jours</Text>
+        </View>
+        <Text style={styles.adherenceTaux}>{formaterTaux(adherence?.tauxAdherence)}</Text>
+        <Ionicons name="chevron-forward" size={18} color={colors.inkSoft} />
+      </Pressable>
+
       <View style={styles.carte}>
         <Text style={styles.carteTitre}>Prochaine étape</Text>
         <Text style={styles.carteTexte}>
@@ -125,6 +181,11 @@ export default function DashboardScreen({ navigation }) {
           label="Confirmer le remplissage hebdomadaire"
           variant="secondary"
           onPress={() => navigation.navigate('Remplissage')}
+        />
+        <PrimaryButton
+          label="Mon historique"
+          variant="secondary"
+          onPress={() => navigation.navigate('Historique')}
         />
         <PrimaryButton
           label="Démonstration en direct"
@@ -172,6 +233,24 @@ const styles = StyleSheet.create({
     borderColor: colors.line,
     padding: spacing.lg,
     marginBottom: spacing.lg,
+  },
+  carteAdherence: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.white,
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: colors.line,
+    padding: spacing.lg,
+    marginBottom: spacing.lg,
+  },
+  adherenceTexte: { flex: 1 },
+  adherenceLegende: { fontFamily: fonts.body, fontSize: fontSizes.label, color: colors.inkSoft },
+  adherenceTaux: {
+    fontFamily: fonts.heading,
+    fontSize: fontSizes.h2,
+    color: colors.ink,
+    marginRight: spacing.sm,
   },
   carteTitre: { fontFamily: fonts.bodySemiBold, fontSize: fontSizes.body, color: colors.ink, marginBottom: 6 },
   carteTexte: { fontFamily: fonts.body, fontSize: fontSizes.small, color: colors.inkSoft, marginBottom: spacing.md },
