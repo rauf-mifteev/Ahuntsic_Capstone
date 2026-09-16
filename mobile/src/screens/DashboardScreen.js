@@ -13,15 +13,11 @@ import { planifierRappelsPourAujourdhui } from '../notifications/planificateur';
 import { colors, spacing, radius } from '../theme/colors';
 import { fonts, fontSizes } from '../theme/typography';
 
-// Toutes les 10 secondes : assez rapide pour qu'un changement de statut se
-// voie pendant une démonstration, assez lent pour ne pas épuiser la batterie
-// ni réveiller l'hébergement gratuit sans raison.
 const DELAI_SONDAGE_MS = 10000;
 
 const JOURS_ADHERENCE = 7;
 
 function formaterTaux(taux) {
-  // null = aucune prise réglée sur la période. Afficher 0 % serait faux.
   if (taux === null || taux === undefined) return '—';
   return `${Math.round(taux * 100)} %`;
 }
@@ -41,19 +37,14 @@ export default function DashboardScreen({ navigation }) {
   const [adherence, setAdherence] = useState(null);
   const [rafraichissement, setRafraichissement] = useState(false);
 
-  // Sert à ignorer une réponse qui arrive après qu'on a quitté l'écran.
   const ecranAffiche = useRef(false);
 
-  // Un seul chargement, utilisé par les trois chemins : arrivée sur l'écran,
-  // sondage périodique, et geste de l'utilisateur.
   const chargerDonnees = useCallback(async ({ planifierLesRappels = true } = {}) => {
     try {
       const [prisesDuJour, dispositif, medicaments, historique] = await Promise.all([
         listerPrisesDuJour(),
         obtenirMonDispositif(),
         listerMedicaments(),
-        // L'historique est un bonus d'affichage : s'il échoue, le tableau de
-        // bord doit rester utilisable.
         obtenirHistorique(JOURS_ADHERENCE).catch(() => null),
       ]);
       if (!ecranAffiche.current) return;
@@ -71,9 +62,6 @@ export default function DashboardScreen({ navigation }) {
       });
       setInfosParCompartiment(parCompartiment);
 
-      // Les rappels ne sont replanifiés qu'à l'arrivée sur l'écran : les
-      // reprogrammer à chaque sondage annulerait et recréerait les
-      // notifications toutes les dix secondes.
       if (planifierLesRappels) {
         planifierRappelsPourAujourdhui(prisesDuJour, parCompartiment).catch((err) => {
           // eslint-disable-next-line no-console
@@ -92,8 +80,6 @@ export default function DashboardScreen({ navigation }) {
       ecranAffiche.current = true;
       chargerDonnees();
 
-      // Sans ce sondage, un statut qui change pendant qu'on regarde l'écran
-      // ne s'afficherait qu'au prochain retour sur l'écran.
       const intervalle = setInterval(() => {
         chargerDonnees({ planifierLesRappels: false });
       }, DELAI_SONDAGE_MS);
@@ -105,8 +91,6 @@ export default function DashboardScreen({ navigation }) {
     }, [chargerDonnees])
   );
 
-  // Geste « tirer pour rafraîchir » : l'utilisateur n'attend pas le prochain
-  // sondage.
   const rafraichirALaMain = useCallback(async () => {
     setRafraichissement(true);
     await chargerDonnees({ planifierLesRappels: false });

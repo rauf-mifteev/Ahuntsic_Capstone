@@ -44,9 +44,9 @@ Une seule photo de plateau donne 28 exemples étiquetés. Une trentaine de photo
 
 Niveaux de gris, seuil, comptage des pixels sombres dans la zone. Dix lignes de code.
 
-Deux avantages. On a un système qui fonctionne dès le premier jour, avant que le modèle existe. Et on obtient un point de comparaison chiffré : pouvoir dire « le seuillage donne 91 %, le modèle donne 98 %, voici les cas où le seuillage échoue » prouve que la partie intelligente sert à quelque chose.
+Deux avantages. On a un système qui fonctionne dès le premier jour, avant que le modèle existe. Et on obtient un point de comparaison chiffré. Ce point de comparaison a été mesuré : sur nos images de test, les deux méthodes donnent 100 %. L'écart se voit ailleurs. À contraste réduit de moitié, le seuillage tombe à 47,62 %, le niveau du hasard, alors que le modèle entraîné reste à 100 %. Les images dégradées sont fabriquées à partir de nos images synthétiques, pas photographiées : on mesure la robustesse à l'éclairage, pas la performance sur de vraies photos. Voir [la mesure de robustesse](mesure-robustesse.md).
 
-C'est finalement cette stratégie qui tourne sur le service déployé : le modèle entraîné a besoin de PyTorch, trop lourd pour le palier gratuit de Render.
+C'est le modèle entraîné qui tourne sur le service déployé, depuis l'étape 1 du sprint 3. PyTorch pèse environ 500 Mo, et 2,5 Go avec ses dépendances ; TensorFlow environ 550 Mo. Le palier gratuit de Render donne 512 Mo de mémoire : aucun des deux n'y tient. On entraîne donc en local avec PyTorch, on exporte le modèle au format ONNX, un format de fichier qui permet d'exécuter un modèle entraîné sans installer PyTorch, et ONNX Runtime l'exécute en ligne. Ce moteur pèse environ 16 Mo. Le seuillage reste la solution de secours.
 
 ## Notifications
 

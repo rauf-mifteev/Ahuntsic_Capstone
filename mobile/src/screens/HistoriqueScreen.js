@@ -20,15 +20,12 @@ const LIBELLE_STATUT = {
 };
 
 function formaterTaux(taux) {
-  // null = aucune prise réglée sur la période. Afficher 0 % serait faux.
   if (taux === null || taux === undefined) return '—';
   return `${Math.round(taux * 100)} %`;
 }
 
 function formaterDate(dateCalendaire) {
   const [annee, mois, jour] = dateCalendaire.split('-').map(Number);
-  // Date construite en UTC puis formatée en UTC : le jour affiché est
-  // exactement celui que l'API a calculé dans le fuseau du patient.
   const date = new Date(Date.UTC(annee, mois - 1, jour));
   return new Intl.DateTimeFormat('fr-CA', {
     weekday: 'short',
@@ -71,8 +68,6 @@ export default function HistoriqueScreen() {
       const resultat = await obtenirHistorique(nombreJours);
       setHistorique(resultat);
     } catch (err) {
-      // Le message vient de l'API quand elle en donne un (404 sans pilulier
-      // associé, par exemple) ; sinon on reste générique.
       setErreur(err?.response?.data?.erreur || "L'historique n'a pas pu être chargé.");
     }
   }, []);
@@ -115,8 +110,6 @@ export default function HistoriqueScreen() {
         setCreneauxParCompartiment(parCompartiment);
         setPrisesDuJour(prises);
       } catch (err) {
-        // Le détail d'un jour est un bonus : s'il ne charge pas, le reste de
-        // l'écran doit rester utilisable.
         setPrisesDuJour([]);
       }
     },

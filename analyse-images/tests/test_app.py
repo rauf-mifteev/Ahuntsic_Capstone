@@ -1,4 +1,4 @@
-"""Tests du service FastAPI (PC-49/51).
+"""Tests du service FastAPI.
 
 Le TestClient de FastAPI appelle l'application directement, sans lancer de
 serveur ni ouvrir de port : ces tests sont donc rapides et n'entrent jamais
@@ -93,7 +93,7 @@ def test_analyser_avec_une_vraie_image_n_est_pas_marque_simule(client):
 
 def test_analyse_simulee_renvoie_l_image_dessinee(client):
     """Sans cette image, Verification.image reste toujours null côté API et
-    la purge à 30 jours (PC-52) met à null un champ déjà null."""
+    la purge à 30 jours met à null un champ déjà null."""
     client.post("/simulation/remplir", json={"dispositifId": "PILULIER-TEST"})
 
     corps = client.post("/analyser", json={"dispositifId": "PILULIER-TEST"}).json()

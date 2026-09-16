@@ -1,5 +1,5 @@
 """
-Lecture/écriture du manifeste d'annotations (PC-46).
+Lecture/écriture du manifeste d'annotations.
 
 Convention retenue : chaque sous-ensemble (`entrainement/`, `test/`) contient
 un dossier `photos/` (les photos entières du plateau, une par prise de vue)

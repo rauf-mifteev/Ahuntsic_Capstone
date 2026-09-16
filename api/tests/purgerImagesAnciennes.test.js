@@ -50,7 +50,7 @@ describe('purgerImagesAnciennes', () => {
   });
 });
 
-describe('PC-52 de bout en bout : la purge a désormais quelque chose à purger', () => {
+describe('De bout en bout : la purge a désormais quelque chose à purger', () => {
 
   const ancien = new Date('2026-09-01T12:00:00Z');
 

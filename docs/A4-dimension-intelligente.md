@@ -8,7 +8,11 @@ Un interrupteur sur le couvercle détecte l'ouverture, en simulation. Le microco
 
 On utilise MobileNetV3-Small, un modèle déjà entraîné sur ImageNet, dont on réentraîne seulement les dernières couches. Il compte environ 2,5 millions de paramètres, fonctionne sans carte graphique et analyse les 28 zones en moins d'une seconde. Une seule photo donne 28 exemples étiquetés, alors une trentaine de photos suffisent.
 
-En parallèle, on écrit une version simple par seuillage avec OpenCV. Elle nous sert de point de comparaison chiffré et de solution de secours. C'est elle qui tourne sur le service déployé : le modèle entraîné a besoin de PyTorch, trop lourd pour le palier gratuit de Render.
+En parallèle, on écrit une version simple par seuillage avec OpenCV. Elle nous sert de point de comparaison chiffré et de solution de secours.
+
+C'est le modèle entraîné qui tourne sur le service déployé, depuis l'étape 1 du sprint 3. Voici pourquoi ce n'est pas si simple. PyTorch, la bibliothèque qui sert à entraîner le modèle, pèse environ 500 Mo, et 2,5 Go avec ses dépendances. TensorFlow, son concurrent, pèse environ 550 Mo. Le palier gratuit de Render donne 512 Mo de mémoire : aucun des deux ne tient. On entraîne donc avec PyTorch sur nos machines, puis on exporte le modèle au format ONNX, un format de fichier qui permet d'exécuter un modèle entraîné sans installer PyTorch. En ligne, c'est ONNX Runtime qui le fait tourner. Ce moteur pèse environ 16 Mo. Mêmes poids, mêmes verdicts : seul le moteur change.
+
+Est-ce que le modèle apporte vraiment quelque chose ? Sur nos images de test, les deux méthodes donnent 100 % : la comparaison habituelle ne montre rien. L'écart apparaît dès que l'éclairage s'écarte des conditions d'entraînement. À contraste réduit de moitié, le seuillage tombe à 47,62 %, soit le niveau du hasard sur une décision entre deux réponses, alors que le modèle entraîné reste à 100 %. C'est ça qui justifie le modèle, pas un gain de précision sur des images faciles. Les images dégradées sont fabriquées à partir de nos images synthétiques, pas photographiées : on mesure la robustesse à l'éclairage, pas la performance sur de vraies photos. Le détail est dans [la mesure de robustesse](mesure-robustesse.md).
 
 ## 3.2 Réponses aux quatre questions du client
 

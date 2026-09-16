@@ -1,5 +1,5 @@
 """
-Plateau simulé (PC-51) — la source des photos, en l'absence de caméra.
+Plateau simulé — la source des photos, en l'absence de caméra.
 
 Pourquoi ce module existe
 -------------------------
@@ -53,7 +53,7 @@ def etat(identifiant: str) -> list:
     return list(_plateau(identifiant)["etats"])
 
 def remplir(identifiant: str) -> list:
-    """Remplissage hebdomadaire : les 28 cases deviennent pleines (PC-56)."""
+    """Remplissage hebdomadaire : les 28 cases deviennent pleines."""
     plateau = _plateau(identifiant)
     plateau["etats"] = [True] * NB_ZONES
     return list(plateau["etats"])

@@ -13,4 +13,4 @@ Recevoir un rappel à l'heure prévue. Savoir si une prise a vraiment eu lieu. S
 Savoir quand le système n'est pas sûr, au lieu de recevoir une réponse peut-être fausse.
 
 **Validation**
-[À REMPLIR APRÈS LA SÉANCE DE RAFFINEMENT — Date, réaction du client, corrections demandées.]
+Approuvé.

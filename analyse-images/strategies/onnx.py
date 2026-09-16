@@ -32,7 +32,6 @@ except ImportError:
 
 TAILLE_ENTREE = 64
 
-# Les mêmes constantes qu'ImageNet, déjà utilisées par strategies/mobilenet.py.
 MOYENNE = np.array([0.485, 0.456, 0.406], dtype=np.float32)
 ECART_TYPE = np.array([0.229, 0.224, 0.225], dtype=np.float32)
 
@@ -51,9 +50,9 @@ def preparer_lot(zones):
 
     for indice, zone in enumerate(zones):
         redimensionnee = zone.convert("RGB").resize((TAILLE_ENTREE, TAILLE_ENTREE), Image.BILINEAR)
-        pixels = np.asarray(redimensionnee, dtype=np.float32) / 255.0  # (H, L, 3), valeurs 0-1
+        pixels = np.asarray(redimensionnee, dtype=np.float32) / 255.0
         pixels = (pixels - MOYENNE) / ECART_TYPE
-        lot[indice] = np.transpose(pixels, (2, 0, 1))  # (3, H, L), comme PyTorch
+        lot[indice] = np.transpose(pixels, (2, 0, 1))
 
     return lot
 
@@ -90,15 +89,11 @@ class ClassifieurOnnx(Classifieur):
     def analyser(self, image):
         zones = decouper_zones(image.convert("RGB"))
 
-        # Un seul appel pour les 28 zones : l'axe de lot du modèle est
-        # dynamique, c'est ce que prépare exporter_onnx.py.
         sorties = self._session.run(None, {self._nom_entree: preparer_lot(zones)})
         probabilites = softmax(np.asarray(sorties[0], dtype=np.float32))
 
         resultats = []
         for indice in range(NB_ZONES):
-            # Classe 0 = vide, classe 1 = pleine (voir entrainer_mobilenet.py :
-            # l'étiquette vaut 1 quand la case est pleine).
             score_vide = float(probabilites[indice, 0])
             resultats.append(ResultatZone(indice=indice, occupee=score_vide < 0.5, score=score_vide))
 

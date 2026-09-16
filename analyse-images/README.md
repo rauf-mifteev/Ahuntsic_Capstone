@@ -1,11 +1,11 @@
 # Service d'analyse d'images du plateau
 
-Microservice Python séparé de l'API Node.js (voir `docs/B5-architecture-logicielle.md`,
+Microservice Python séparé de l'API Node.js (voir [B5 · Architecture logicielle](../docs/B5-architecture-logicielle.md),
 composant `ServAPI`). Deux raisons à cette séparation :
 
 1. Changer de modèle sans toucher au reste du système.
 2. Développer l'API contre un faux service avant que le vrai modèle
-   n'existe (patron **Stratégie**, voir `docs/B6-patrons-conception.md`).
+   n'existe (patron **Stratégie**, voir [B6 · Patrons de conception](../docs/B6-patrons-conception.md)).
 
 Construit avec **FastAPI**. Le contrat HTTP entre l'API Node.js et ce
 service est publié automatiquement à `/docs` : il est déduit des modèles
@@ -171,8 +171,8 @@ Variable d'environnement `MODELE_STRATEGIE` :
 
 | Valeur | Comportement | Dépendances |
 |---|---|---|
-| `factice` (défaut) | Résultat déterministe, sans regarder l'image. Sert à développer l'API avant que le modèle existe (AC de PC-47). | aucune |
-| `seuillage` | Vrai classifieur : convertit chaque zone en niveaux de gris et compte les pixels sombres (OpenCV). Fonctionne dès le premier jour, sans entraînement. **C'est celui à utiliser en démonstration.** | `opencv-python-headless` |
+| `factice` (défaut) | Résultat déterministe, sans regarder l'image. Sert à développer l'API avant que le modèle existe. | aucune |
+| `seuillage` | Vrai classifieur : convertit chaque zone en niveaux de gris et compte les pixels sombres (OpenCV). Fonctionne dès le premier jour, sans entraînement. **C'est la solution de secours.** | `opencv-python-headless` |
 | `mobilenet` | Le modèle entraîné (section 5). Nécessite `entrainement/modele_mobilenet.pt`. | `torch`, `torchvision` |
 | `onnx` | **Le même modèle entraîné, exécuté sans PyTorch** (section 5.4). Nécessite `entrainement/modele_mobilenet.onnx`. **C'est la stratégie du service déployé.** | `onnxruntime` |
 
@@ -186,7 +186,7 @@ $env:MODELE_STRATEGIE = "seuillage"; python app.py
 
 ---
 
-## 5. Entraîner le modèle (PC-48)
+## 5. Entraîner le modèle
 
 ### 5.1 Le jeu de données est généré, pas photographié
 
@@ -202,7 +202,7 @@ Cela crée `jeu-de-photos-synthetique/` : 24 images d'entraînement et 6 de
 test, soit **672 exemples de zones étiquetés** (chaque image du plateau en
 donne 28), répartis à peu près moitié pleines / moitié vides. Les images de
 test viennent de graines différentes et ne sont jamais vues pendant
-l'entraînement (AC de PC-45).
+l'entraînement.
 
 Le dossier est ignoré par Git : il se régénère en une seconde.
 
@@ -299,7 +299,7 @@ python entrainement/mesurer_erreurs.py
 
 Affiche le taux de faux positifs et de faux négatifs **séparément**, et
 choisit un seuil de décision qui privilégie le doute plutôt qu'une fausse
-confirmation (AC de PC-47).
+confirmation.
 
 Attention à ne pas confondre les deux chiffres qui circulent : ce script
 mesure la stratégie **`seuillage`** (il l'affiche en première ligne).
@@ -330,7 +330,7 @@ Dans ce projet, une case qui passe de pleine à vide **confirme** une prise
 
 C'est pourquoi `mesurer_erreurs.py` mesure les deux séparément plutôt qu'un
 taux d'erreur global, et pourquoi le seuil est choisi pour minimiser les
-faux positifs même au prix de plus de doute (AC de PC-47 / PC-53).
+faux positifs même au prix de plus de doute.
 
 ---
 
@@ -341,18 +341,18 @@ analyse-images/
 ├── zones.py                   Géométrie des 28 zones (7 jours × 4 créneaux)
 ├── jeu_de_donnees.py          Lecture/écriture du manifeste d'annotations (CSV)
 ├── interface_classifieur.py   Le contrat commun (classe Classifieur)
-├── plateau_simule.py          Plateau physique simulé : la source des photos (PC-51)
-├── app.py                     Service FastAPI : les 5 points d'entrée (PC-49/51)
+├── plateau_simule.py          Plateau physique simulé : la source des photos
+├── app.py                     Service FastAPI : les 5 points d'entrée
 ├── strategies/                Patron Stratégie : un contrat, 3 implémentations
 │   ├── factice.py             ClassifieurFactice (aucune dépendance)
 │   ├── seuillage.py           ClassifieurSeuillage (OpenCV)
 │   └── mobilenet.py           ClassifieurMobileNet (le modèle entraîné)
 ├── entrainement/
-│   ├── generer_jeu_synthetique.py   Génère le jeu de données (PC-46)
-│   ├── entrainer_mobilenet.py       Entraînement du modèle (PC-48)
-│   └── mesurer_erreurs.py           Évaluation : FP/FN séparés, seuil (PC-48)
+│   ├── generer_jeu_synthetique.py   Génère le jeu de données
+│   ├── entrainer_mobilenet.py       Entraînement du modèle
+│   └── mesurer_erreurs.py           Évaluation : FP/FN séparés, seuil
 ├── jeu-de-photos/             Vide — voir son README (vraies photos, si un jour)
-└── tests/                     43 tests pytest
+└── tests/                     50 tests pytest
 ```
 
 ---

@@ -1,6 +1,6 @@
 """
-Stratégie MobileNetV3-Small — le VRAI modèle (PC-49), entraîné par
-entrainement/entrainer_mobilenet.py (PC-48).
+Stratégie MobileNetV3-Small — le VRAI modèle, entraîné par
+entrainement/entrainer_mobilenet.py.
 
 Nécessite `torch` et `torchvision` (requirements-entrainement.txt) et un
 modèle déjà entraîné (entrainement/modele_mobilenet.pt). Si ces
@@ -40,7 +40,7 @@ class ClassifieurMobileNet(Classifieur):
         if not chemin_modele.exists():
             raise FileNotFoundError(
                 f"Modèle introuvable : {chemin_modele}. "
-                "Lancez d'abord entrainement/entrainer_mobilenet.py (PC-48)."
+                "Lancez d'abord entrainement/entrainer_mobilenet.py."
             )
 
         self._transformation = transforms.Compose(

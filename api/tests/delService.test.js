@@ -17,7 +17,7 @@ describe('delService.obtenirCommandesDel', () => {
     await expect(delService.obtenirCommandesDel('ID-INCONNU')).rejects.toMatchObject({ statusCode: 401 });
   });
 
-  it('refuse (503) un dispositif en mode démo déconnecté (PC-70)', async () => {
+  it('refuse (503) un dispositif en mode démo déconnecté', async () => {
     dispositifRepository.trouverParIdentifiant.mockResolvedValue({
       ...faireDispositif(),
       modeDemoDeconnecte: true,

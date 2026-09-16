@@ -15,7 +15,6 @@ export default function ScreenContainer({ children, scroll = true, refreshContro
           style={styles.flex}
           contentContainerStyle={scroll ? styles.scrollContent : styles.content}
           keyboardShouldPersistTaps="handled"
-          // Le geste « tirer pour rafraîchir » n'a de sens que sur une vue qui défile.
           refreshControl={scroll ? refreshControl : undefined}
         >
           {children}

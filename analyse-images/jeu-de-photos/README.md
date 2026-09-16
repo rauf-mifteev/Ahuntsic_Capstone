@@ -1,4 +1,4 @@
-# Jeu de données du plateau — PC-46
+# Jeu de données du plateau
 
 **Le projet ne prend aucune photo.** Le jeu de données utilisé pour
 entraîner et évaluer le modèle est **généré**, comme tout le reste de la
@@ -30,15 +30,15 @@ jeu-de-photos-synthetique/
 
 Répartition automatique **80 % entraînement / 20 % test**, avec des graines
 différentes : les images de test ne sont jamais vues pendant
-l'entraînement, ce qui satisfait l'AC de PC-45 (« une partie est mise de
-côté et jamais utilisée pour l'entraînement »).
+l'entraînement. Une partie des images est donc mise de côté et jamais
+utilisée pour l'entraînement, comme le demande le critère d'acceptation.
 
 `annotations.csv` a une ligne par image, avec 28 colonnes `z00` à `z27`
 (`1` = case pleine, `0` = case vide), dans l'ordre canonique de `zones.py`
 (indice = (créneau − 1) × 7 + position du jour, de LUNDI à DIMANCHE).
 
 **Une seule image du plateau entier donne 28 exemples étiquetés** — inutile
-de découper les cases une par une (voir `docs/B7-choix-technologiques.md`).
+de découper les cases une par une (voir [B7 · Choix technologiques](../../docs/B7-choix-technologiques.md)).
 Une trentaine d'images suffit donc largement : environ 840 exemples de
 zones.
 
@@ -55,7 +55,7 @@ propres que la réalité : éclairage constant, aucun reflet, aucune ombre
 portée du rebord, aucun comprimé collé à la paroi, cadrage parfait.
 
 Ce n'est pas un défaut caché du projet, c'est une conséquence assumée du
-périmètre choisi (`docs/A1-perimetre.md` : pas de boîtier physique). Mais
+périmètre choisi ([A1 · Périmètre arrêté](../../docs/A1-perimetre.md) : pas de boîtier physique). Mais
 c'est à annoncer clairement plutôt qu'à laisser découvrir : présenter
 « 98 % de précision » sans préciser sur quoi serait trompeur.
 

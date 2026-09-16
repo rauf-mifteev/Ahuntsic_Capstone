@@ -10,7 +10,7 @@ série, mémoire tampon hors-ligne, `config_locale.h`, et plateforme
 Si vous avez déjà extrait le zip de PC-41, **vous n'avez rien de plus à
 faire pour PC-43** — la mémoire tampon hors-ligne y est déjà incluse.
 
-Voir le `README.md` du package PC-41 pour le détail complet (configuration
+Voir le [README du dépôt](../README.md) pour le détail complet (configuration
 locale, ouverture de la simulation, utilisation, problèmes déjà corrigés).
 
 ## Tester spécifiquement la mémoire tampon (PC-43)
