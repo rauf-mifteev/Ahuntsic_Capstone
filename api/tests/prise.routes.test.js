@@ -42,8 +42,6 @@ describe('GET /api/prises', () => {
   });
 
   it("utilise le jour du PATIENT, pas celui d'UTC, quand UTC est déjà au lendemain", async () => {
-    // 2026-07-16T01:00:00Z = 15 juillet, 21h00 à Toronto (EDT, UTC-4) :
-    // encore "aujourd'hui" pour le patient, déjà "demain" en UTC.
     jest.useFakeTimers().setSystemTime(new Date('2026-07-16T01:00:00Z'));
 
     utilisateurRepository.trouverParId.mockResolvedValue({ fuseauHoraire: 'America/Toronto' });

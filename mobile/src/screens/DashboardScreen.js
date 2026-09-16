@@ -69,9 +69,6 @@ export default function DashboardScreen({ navigation }) {
         });
       }
     } catch (err) {
-      // Chargement du tableau de bord : erreur ignorée volontairement,
-      // l'écran reste utilisable même si prises/dispositif/médicaments
-      // ne se chargent pas (ex. hors-ligne). Le prochain sondage réessaiera.
     }
   }, []);
 

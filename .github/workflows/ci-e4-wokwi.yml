@@ -1,15 +1,3 @@
-# Étape 4 — Circuit simulé (PC-91)
-#
-# Ce fichier ne simule pas le circuit : il le COMPILE. C'est déjà beaucoup —
-# une erreur de compilation est la panne la plus coûteuse à découvrir en
-# pleine démonstration.
-#
-# Il vérifie aussi une chose qu'on oublie facilement : que
-# config_locale.h.example contient bien tout ce dont main.cpp a besoin.
-# Le vrai config_locale.h est ignoré par git (il contient des valeurs
-# personnelles), donc un dépôt fraîchement cloné ne compile pas sans le
-# gabarit. Si quelqu'un ajoute un #define dans son fichier local sans
-# l'ajouter au gabarit, cette compilation échoue — et c'est voulu.
 
 name: E4 · Circuit simulé
 

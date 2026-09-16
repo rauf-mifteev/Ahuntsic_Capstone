@@ -1,10 +1,3 @@
-# Étape 3 — Application mobile (PC-90)
-#
-# ATTENTION : le projet mobile n'a AUCUNE suite de tests automatiques.
-# Ce fichier ne peut donc pas prouver que les écrans fonctionnent. Il vérifie
-# ce qui est vérifiable sans appareil : que le code passe l'analyse statique,
-# que la configuration est lisible, et qu'aucune adresse d'API n'est écrite
-# en dur — le piège qui a déjà coûté du temps à l'équipe.
 
 name: E3 · Application mobile
 

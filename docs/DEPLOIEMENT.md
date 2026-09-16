@@ -157,7 +157,14 @@ qui retirerait `--workers 1` de `render.yaml`.
 
 ## Mettre à jour la version en ligne
 
-Render redéploie tout seul à chaque fusion dans `main`.
+Une fusion dans `main` ne met rien en ligne toute seule : le déploiement
+automatique est désactivé sur les deux services. Après une fusion, ouvrez
+chaque service dans Render et lancez **Manual Deploy**.
+
+Vérifiez ensuite que le commit affiché en haut de la page du service est bien
+celui que vous venez de fusionner. C'est le seul moyen de savoir ce qui tourne
+vraiment en ligne : sans déclenchement manuel, un service peut rester des jours
+sur une version antérieure sans que rien ne le signale.
 
 Deux cas demandent une action en plus.
 

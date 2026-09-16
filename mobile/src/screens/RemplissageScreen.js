@@ -44,9 +44,6 @@ export default function RemplissageScreen({ navigation }) {
         setZonesVides(zones);
         setEtape('resultat');
       } catch (err) {
-        // Sondage périodique : erreur ignorée volontairement, on
-        // retentera automatiquement au prochain intervalle.
-
       }
     }, DELAI_SONDAGE_MS);
 

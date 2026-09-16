@@ -1,9 +1,3 @@
-# Étape 5 — Déploiement et intégration continue (PC-92)
-#
-# Le déploiement n'a jamais été effectué : impossible de le tester ici.
-# Ce fichier vérifie donc ce qui est vérifiable — que les fichiers sont
-# lisibles, et que la contrainte de justesse la plus importante n'a pas
-# été effacée par mégarde.
 
 name: E5 · Déploiement et intégration continue
 
@@ -57,10 +51,6 @@ jobs:
 
       - name: Vérifier la contrainte du processus unique
         run: |
-          # L'état du plateau simulé vit dans la mémoire du processus.
-          # Avec deux processus, une requête peut tomber sur un plateau qui
-          # ignore le remplissage fait juste avant. Ce n'est pas un réglage
-          # de vitesse : c'est une contrainte de justesse.
           if ! grep -q -- "--workers 1" render.yaml; then
             echo "::error::render.yaml ne déclare plus le service d'analyse en un seul processus (--workers 1)."
             exit 1

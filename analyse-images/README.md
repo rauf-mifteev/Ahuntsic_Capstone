@@ -310,8 +310,7 @@ L'évaluation du modèle entraîné, elle, s'affiche à la fin de
 > même générateur d'images : les images de test sont différentes, mais
 > partagent le même dessin, le même bruit et le même éclairage. Un score de
 > 100 % ne dit rien de la performance sur de vraies photos. Les deux
-> scripts affichent cet avertissement automatiquement — ne le retirez pas
-> de vos captures d'écran.
+> scripts affichent cet avertissement automatiquement.
 
 ---
 

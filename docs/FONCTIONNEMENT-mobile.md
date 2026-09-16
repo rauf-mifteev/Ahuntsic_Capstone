@@ -70,8 +70,9 @@ s'il est connecté ou hors ligne, et la date du dernier contact. Quand aucun
 pilulier n'est associé, l'écran propose un champ pour saisir l'identifiant et
 le rattacher.
 
-**Démonstration** — un écran de contrôle pour la revue : voir l'état du
-circuit et **provoquer une panne réseau** volontairement.
+**Démonstration** — un écran de contrôle : voir l'état du circuit et
+**provoquer une panne réseau** volontairement, pour vérifier qu'aucun
+événement ne se perd pendant la coupure.
 
 ## Le tableau de bord se rafraîchit tout seul
 
@@ -91,6 +92,13 @@ suite.
 Les trois chemins — l'arrivée sur l'écran, le sondage et le geste manuel —
 appellent **la même fonction de chargement**. Une seule façon de lire les
 données, donc un seul endroit à corriger.
+
+Une erreur pendant un chargement est **ignorée volontairement**, ici comme dans
+l'écran de remplissage. Ce n'est pas un oubli : si les prises, le dispositif ou
+les médicaments ne se chargent pas — hors ligne, service endormi — l'écran
+reste utilisable avec ce qu'il a déjà, et le sondage suivant retentera dix
+secondes plus tard. Afficher une erreur à chaque tentative ratée rendrait
+l'application inutilisable dans un ascenseur.
 
 ## Les rappels
 

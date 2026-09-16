@@ -144,8 +144,7 @@ stratégie `seuillage`. L'option `--strategie onnx` mesure le modèle entraîné
 Le nom de la stratégie mesurée s'affiche en première ligne, pour éviter la
 confusion.
 
-**Un chiffre à ne pas citer sans précaution** : le score obtenu tourne autour
-de 100 %. Il est trompeur. Les images de test viennent du même générateur que
+**Le score obtenu tourne autour de 100 %, et il est trompeur.** Les images de test viennent du même générateur que
 celles d'entraînement — même dessin, même grain, même éclairage. Ça ne dit
 rien de la performance sur de vraies photos.
 
