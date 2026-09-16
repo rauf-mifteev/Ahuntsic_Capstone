@@ -54,6 +54,18 @@ Si la mémoire se remplit, le **plus ancien** est abandonné. Perdre un
 événement très vieux est moins grave que perdre celui qui vient de se
 produire.
 
+## Compiler et lancer la simulation
+
+Le firmware se compile avec PlatformIO : `pio run`, depuis le dossier `wokwi/`.
+Le binaire sort dans `.pio/build/esp32dev/`.
+
+`wokwi.toml` pointe **directement** sur cette sortie. Il n'y a donc aucun script
+de copie à lancer entre la compilation et la simulation : `pio run` suffit.
+
+Pour lancer la simulation, deux façons. Ouvrir le dossier `wokwi/` avec
+l'extension **Wokwi Simulator** de Visual Studio Code, qui lit `wokwi.toml`. Ou
+déposer `diagram.json` et `wokwi.toml` sur wokwi.com, sans rien installer.
+
 ## Le fichier de configuration personnel
 
 `src/config_locale.h` contient l'adresse de l'API et l'identifiant du
@@ -77,7 +89,7 @@ adresse publique vers votre machine. C'est décrit dans
 L'adresse du tunnel **change à chaque redémarrage**. Il faut alors modifier
 `config_locale.h` **et recompiler**.
 
-## Deux pièges rencontrés
+## Trois pièges rencontrés
 
 **Cliquer lentement pendant la démonstration de panne.** Laissez au moins 6
 secondes entre deux clics. L'envoi réseau bloque le programme pendant environ
@@ -89,6 +101,20 @@ interruption.
 **Un message d'erreur normal.** À chaque requête sécurisée, la console affiche
 `setSocketOption(): fail on 0, errno: 9`. C'est un bruit connu de la
 bibliothèque ESP32, sans aucune conséquence — les requêtes aboutissent bien.
+
+**Une version de plateforme épinglée dans `platformio.ini`.** La version dite
+« stable » de la plateforme communautaire pioarduino peut livrer un
+compilateur incompatible avec `board = esp32dev` : ses binaires ne visent que
+l'ESP32-S3. La compilation échoue alors à l'édition de liens, avec un message
+qui ne dit pas la vraie cause :
+
+```
+'xtensa-esp32-elf-g++' is not recognized as an internal or external command
+```
+
+`platformio.ini` déclare donc une version antérieure précise, confirmée
+fonctionnelle avec `esp32dev`. **Ne remplacez pas cette URL par la dernière
+version sans recompiler**, sinon l'erreur revient.
 
 ## Le fichier `diagram.json`
 

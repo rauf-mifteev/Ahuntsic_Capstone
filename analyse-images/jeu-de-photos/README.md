@@ -46,7 +46,7 @@ Les étiquettes sont exactes par construction : le générateur sait ce qu'il
 a dessiné. Aucune annotation manuelle n'est nécessaire, et aucune erreur
 d'étiquetage n'est possible.
 
-## Ce que ça coûte — à dire en revue
+## Ce que ça coûte
 
 Un modèle entraîné sur des images dessinées et évalué sur des images du
 **même générateur** obtient un très bon score, et ce score ne dit rien de
@@ -56,8 +56,8 @@ portée du rebord, aucun comprimé collé à la paroi, cadrage parfait.
 
 Ce n'est pas un défaut caché du projet, c'est une conséquence assumée du
 périmètre choisi ([A1 · Périmètre arrêté](../../docs/A1-perimetre.md) : pas de boîtier physique). Mais
-c'est à annoncer clairement plutôt qu'à laisser découvrir : présenter
-« 98 % de précision » sans préciser sur quoi serait trompeur.
+Mais la limite doit être énoncée avec le chiffre : annoncer « 98 % de
+précision » sans dire sur quoi serait trompeur.
 
 ## Si vous décidez d'ajouter de vraies photos
 

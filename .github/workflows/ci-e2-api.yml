@@ -1,7 +1,3 @@
-# Étape 2 — API (PC-89)
-# Ce fichier REMPLACE l'ancien .github/workflows/ci.yml : il fait la même
-# chose, plus la vérification des fichiers de configuration. Supprimez ci.yml
-# en ajoutant celui-ci, sinon les tests de l'API tourneront deux fois.
 
 name: E2 · API
 

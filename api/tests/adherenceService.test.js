@@ -21,7 +21,7 @@ describe('adherenceService.obtenirHistorique', () => {
     expect(priseRepository.listerParPeriodePourDispositif).toHaveBeenCalledWith('d1', '2026-09-09', '2026-09-15');
   });
 
-  it("exclut les prises encore en attente du taux d'adhérence (AC de PC-66)", async () => {
+  it("exclut les prises encore en attente du taux d'adhérence", async () => {
     priseRepository.listerParPeriodePourDispositif.mockResolvedValue([
       prise('2026-09-15', 'CONFIRMEE', 'AUTOMATIQUE'),
       prise('2026-09-15', 'CONFIRMEE', 'MANUELLE'),
@@ -32,7 +32,6 @@ describe('adherenceService.obtenirHistorique', () => {
 
     const { resume } = await adherenceService.obtenirHistorique('u1', { dateFin: '2026-09-15', nombreJours: 1 });
 
-    // 2 confirmées sur 3 prises réglées : les 2 prises en attente ne comptent pas.
     expect(resume.tauxAdherence).toBeCloseTo(2 / 3);
     expect(resume.enAttente).toBe(2);
     expect(resume.total).toBe(5);
@@ -56,8 +55,6 @@ describe('adherenceService.obtenirHistorique', () => {
 
     const { resume } = await adherenceService.obtenirHistorique('u1', { dateFin: '2026-09-15', nombreJours: 1 });
 
-    // null = « on ne sait pas encore », 0 = « tout a été manqué ». L'écran
-    // doit pouvoir afficher un tiret plutôt qu'un 0 % faux.
     expect(resume.tauxAdherence).toBeNull();
   });
 

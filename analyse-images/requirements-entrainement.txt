@@ -1,5 +1,5 @@
-# Dépendances SUPPLÉMENTAIRES pour entraîner le vrai modèle MobileNetV3
-# (PC-48). Pas nécessaires pour faire tourner le service en mode
+# Dépendances SUPPLÉMENTAIRES pour entraîner le vrai modèle MobileNetV3.
+# Pas nécessaires pour faire tourner le service en mode
 # "factice" ou "seuillage" — seulement pour exécuter
 # entrainement/entrainer_mobilenet.py.
 #

@@ -41,8 +41,6 @@ describe('GET /api/prises/historique', () => {
   });
 
   it("n'est pas avalée par la route /prises/:id", async () => {
-    // Si '/prises/historique' était déclarée après '/prises/:id', Express
-    // prendrait « historique » pour un identifiant de prise.
     await request(app).get('/api/prises/historique').set('Authorization', 'Bearer x');
 
     expect(adherenceService.obtenirHistorique).toHaveBeenCalled();

@@ -1,6 +1,6 @@
 # Diagrammes de séquence
 
-Cinq séquences. Les deux plus importantes pour la revue sont la prise normale, qui montre la chaîne complète du capteur jusqu'à l'écran, et la prise ambiguë, qui montre ce qui arrive quand le modèle se trompe.
+Cinq séquences. Les deux plus parlantes sont la prise normale, qui montre la chaîne complète du capteur jusqu'à l'écran, et la prise ambiguë, qui montre ce qui arrive quand le modèle se trompe.
 
 ## 1. Configuration initiale
 
@@ -24,7 +24,7 @@ Le patient confirme dans l'application. Le boîtier allume les DEL, les éteint 
 
 *Figure 5 — Chaîne complète, du capteur jusqu'à l'écran.*
 
-C'est la séquence à montrer en premier au client.
+C'est la séquence qui résume le mieux le système entier.
 
 1. Le patient ferme le couvercle.
 2. L'ESP32 allume les 28 DEL, puis les éteint.

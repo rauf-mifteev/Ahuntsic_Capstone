@@ -81,8 +81,8 @@ main. Le système est réglé pour préférer le second cas.
 
 ## Ce qui est réel, ce qui est simulé
 
-C'est la question que le correcteur posera en premier, alors autant être
-clair.
+C'est la première question que pose le projet, alors autant y répondre
+clairement.
 
 | Vraiment réel | Simulé |
 |---|---|

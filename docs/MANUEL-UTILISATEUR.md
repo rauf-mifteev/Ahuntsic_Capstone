@@ -33,7 +33,7 @@ n'y a plus rien à régler.
 
 ## 3. Créer son compte et se connecter
 
-![L'écran de connexion](assets/01-connexion.png)
+<img src="assets/01-connexion.png" alt="L'écran de connexion" width="300">
 
 À la première ouverture, touchez **Créer un compte**.
 
@@ -68,7 +68,7 @@ ligne, et la date du dernier contact.
 
 ## 5. Régler ses quatre moments de prise
 
-![L'écran des moments de prise](assets/03-creneaux.png)
+<img src="assets/03-creneaux.png" alt="L'écran des moments de prise" width="300">
 
 Le plateau a quatre rangées, une par moment de la journée. Vous donnez une
 heure à chacune.
@@ -86,7 +86,7 @@ heures que la lumière s'allumera et que le rappel arrivera.
 
 ## 6. Ajouter ses médicaments
 
-![L'écran des médicaments](assets/04-medicaments.png)
+<img src="assets/04-medicaments.png" alt="L'écran des médicaments" width="300">
 
 Allez dans l'écran **Médicaments** et ajoutez-les un par un.
 
@@ -108,7 +108,7 @@ cochez les deux : il occupera deux rangées.
 
 ## 7. Remplir le pilulier pour la semaine
 
-![L'écran de remplissage](assets/05-remplissage.png)
+<img src="assets/05-remplissage.png" alt="L'écran de remplissage" width="300">
 
 Une fois par semaine, remplissez physiquement les cases de votre plateau,
 comme vous le feriez avec n'importe quel pilulier.
@@ -128,7 +128,7 @@ de départ de la semaine. Toutes les prises seront comparées à celle-là.
 
 ## 8. Le geste de tous les jours
 
-![Le tableau de bord](assets/02-tableau-de-bord.png)
+<img src="assets/02-tableau-de-bord.png" alt="Le tableau de bord" width="300">
 
 À l'heure prévue, deux choses arrivent : la lumière de la bonne case s'allume
 sur le pilulier, et une notification apparaît sur votre téléphone.
@@ -149,7 +149,7 @@ pouvez aussi tirer l'écran vers le bas pour forcer une mise à jour.
 
 ## 9. Lire le résultat
 
-![L'écran de résultat](assets/06-resultat.png)
+<img src="assets/06-resultat.png" alt="L'écran de résultat" width="300">
 
 Trois réponses sont possibles.
 
@@ -172,7 +172,7 @@ pris quand même, vous pouvez le confirmer vous-même.
 
 ## 10. Votre historique et votre régularité
 
-![L'écran d'historique](assets/07-historique.png)
+<img src="assets/07-historique.png" alt="L'écran d'historique" width="300">
 
 L'écran **Historique** montre comment vous vous en sortez dans le temps.
 

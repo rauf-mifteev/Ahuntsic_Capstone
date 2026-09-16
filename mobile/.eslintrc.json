@@ -3,5 +3,5 @@
   "extends": ["eslint:recommended", "plugin:react/recommended"],
   "parserOptions": { "ecmaVersion": 2021, "sourceType": "module", "ecmaFeatures": { "jsx": true } },
   "settings": { "react": { "version": "18.2" } },
-  "rules": { "react/prop-types": "off", "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }] }
+  "rules": { "no-empty": ["error", { "allowEmptyCatch": true }], "react/prop-types": "off", "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }] }
 }

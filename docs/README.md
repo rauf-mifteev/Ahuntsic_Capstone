@@ -57,9 +57,6 @@ livrables A à E.
 
 ## Pour les utilisateurs
 
-Un seul document, écrit pour la personne qui se sert du pilulier. Aucun
-vocabulaire technique.
-
 - [Manuel d'utilisation](MANUEL-UTILISATEUR.md)
 
 ## G — Comment ça marche

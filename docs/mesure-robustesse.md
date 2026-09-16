@@ -33,7 +33,7 @@ sur un carré clair, toujours le même éclairage, aucune ombre, aucun reflet. C
 les pixels sombres suffit largement.
 
 Conclusion honnête : **sur ces images-là, le modèle entraîné n'apporte rien de
-mesurable.** Il faut le dire avant qu'on nous le demande.
+mesurable.**
 
 ## Ce qui sépare vraiment les deux méthodes
 
@@ -72,7 +72,7 @@ une case vide avec une case pleine, quelle que soit la méthode.
 
 ## Ce que cette mesure ne dit pas
 
-Trois limites à annoncer soi-même.
+Trois limites.
 
 Les images dégradées **sont fabriquées à partir de nos images synthétiques**, pas
 photographiées. On mesure la robustesse à un changement d'éclairage simulé, pas la

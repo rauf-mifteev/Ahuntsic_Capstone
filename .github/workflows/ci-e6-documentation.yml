@@ -1,10 +1,3 @@
-# Étape 6 — Documentation et répétition (PC-93)
-#
-# On ne peut pas automatiser la répétition de la démonstration : elle se fait
-# à trois, devant un vrai téléphone. Ce fichier vérifie la seule chose
-# mécanique de l'étape — que les documents ne se renvoient pas vers des
-# fichiers qui n'existent plus. C'est arrivé : des documents renommés ont
-# laissé des liens morts derrière eux.
 
 name: E6 · Documentation
 

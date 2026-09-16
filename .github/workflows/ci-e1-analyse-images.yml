@@ -1,6 +1,3 @@
-# Étape 1 — Service d'analyse d'images (PC-88)
-# Ce fichier se place dans .github/workflows/ à la racine du dépôt.
-# Il ne se déclenche que si la proposition de fusion touche analyse-images/.
 
 name: E1 · Service d'analyse d'images
 
@@ -55,8 +52,4 @@ jobs:
         working-directory: analyse-images
         run: pytest tests/ -q
         env:
-          # Surtout pas "mobilenet" : le modèle entraîné a besoin de torch,
-          # qui vit dans requirements-entrainement.txt et n'est pas installé
-          # ici — l'intégration continue resterait bloquée dix minutes pour
-          # rien. La stratégie factice suffit à valider le service.
           MODELE_STRATEGIE: factice
