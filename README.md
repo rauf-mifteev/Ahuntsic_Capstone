@@ -138,17 +138,9 @@ n'exécute que ce qui est utile.
 | `ci-e6-documentation.yml` | liens entre les documents | `**/*.md` |
 | `ci-s3-e1-modele-onnx.yml` | le modèle ONNX est versionné, aucun `.pt` ne l'est, et le modèle tourne sans PyTorch | `analyse-images/**` |
 
-Une pull request ne peut pas être fusionnée dans `main` si un contrôle échoue
-(voir la section « Réglages GitHub » ci-dessous).
-
-## Réglages GitHub (à faire une fois, dans les paramètres du dépôt)
-
-1. **Settings → Branches → Add branch protection rule** sur `main`.
-2. Cocher *Require a pull request before merging* et *Require approvals* (≥ 1).
-3. Cocher *Require status checks to pass before merging*, puis sélectionner les
-   contrôles des workflows listés ci-dessus. Un contrôle n'apparaît dans cette
-   liste qu'après s'être exécuté au moins une fois.
-4. Cocher *Do not allow bypassing the above settings* si l'option est offerte.
+Une pull request ne peut pas être fusionnée dans `main` si un contrôle échoue.
+La protection de branche qui l'impose est décrite dans
+[E1 · Dépôt de code](docs/E1-depot-code.md).
 
 ## Documentation
 
