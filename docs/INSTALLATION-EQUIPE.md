@@ -65,6 +65,11 @@ python app.py
 Attendu : `Uvicorn running on http://0.0.0.0:5001`.
 **Laissez cette fenêtre ouverte.**
 
+> `seuillage` est le bon choix pour démarrer : il ne demande ni entraînement
+> ni dépendance lourde. Le service déployé, lui, tourne en `onnx`, le modèle
+> entraîné. Pour l'utiliser vous aussi, il faut d'abord lancer
+> `entrainement/exporter_onnx.py`, puis remplacer la valeur par `"onnx"`.
+
 Ouvrez http://localhost:5001/docs dans un navigateur : vous devez voir la
 documentation interactive du service.
 
@@ -269,5 +274,5 @@ Toujours démarrer le service d'analyse **avant** l'API.
 | Connexion MongoDB en timeout | votre IP n'est pas autorisée dans **Network Access** |
 | Le circuit reçoit 401 | l'identifiant n'est associé à aucun compte |
 | Le circuit n'atteint pas l'API | le tunnel est fermé, ou son adresse a changé |
-| Toujours le même verdict | `MODELE_STRATEGIE` est sur `factice`, passez à `seuillage` |
+| Toujours le même verdict | `MODELE_STRATEGIE` est sur `factice`. Passez à `seuillage`, ou à `onnx` si vous avez déjà exporté le modèle |
 | Aucune prise ne se confirme | le remplissage hebdomadaire n'a jamais été confirmé |

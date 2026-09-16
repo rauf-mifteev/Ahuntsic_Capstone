@@ -4,7 +4,6 @@ const utilisateurRepository = require('../repositories/utilisateurRepository');
 const { asyncHandler } = require('../middleware/errorHandler');
 
 function dateDuJourDansLeFuseau(fuseauHoraire) {
-  // 'en-CA' formatte directement au format YYYY-MM-DD
   return new Intl.DateTimeFormat('en-CA', { timeZone: fuseauHoraire }).format(new Date());
 }
 
@@ -31,8 +30,6 @@ const obtenirHistorique = asyncHandler(async (req, res) => {
   const fuseauHoraire = await obtenirFuseauHoraireUtilisateur(req.utilisateurId);
   const dateFin = req.query.date || dateDuJourDansLeFuseau(fuseauHoraire);
 
-  // `jours` arrive en texte : Number('abc') donne NaN, que le service
-  // refusera avec un 400 plutôt qu'un 500.
   const nombreJours = req.query.jours === undefined
     ? adherenceService.NOMBRE_JOURS_PAR_DEFAUT
     : Number(req.query.jours);

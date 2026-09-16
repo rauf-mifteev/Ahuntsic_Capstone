@@ -1,4 +1,4 @@
-"""Tests du plateau simulé (PC-51) — la source des photos en l'absence de caméra."""
+"""Tests du plateau simulé — la source des photos en l'absence de caméra."""
 import sys
 from pathlib import Path
 

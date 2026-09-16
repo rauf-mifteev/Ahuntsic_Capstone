@@ -218,7 +218,7 @@ RG-04 — Un événement d'un boîtier inconnu est refusé et noté.
 RG-05 — Une prise dont la case n'a pas été vidée après le délai passe à « manquée ».
 RG-06 — Une prise passe de « prévue » à « en vérification », puis à « confirmée », « manquée » ou « ambiguë ». Une prise réglée ne redevient jamais ambiguë.
 RG-07 — On ne peut ni modifier ni supprimer une entrée de l'historique.
-RG-08 — Le taux d'adhérence est le nombre de prises confirmées divisé par le nombre de prises prévues. Une prise ambiguë non réglée compte comme non confirmée.
+RG-08 — Le taux d'adhérence est le nombre de prises confirmées divisé par le nombre de prises réglées, c'est-à-dire confirmées ou manquées. Une prise encore prévue, en vérification ou ambiguë n'entre pas dans le calcul.
 RG-09 — Un compte est relié à un seul boîtier.
 RG-10 — Un traitement ne peut pas avoir plus de quatre heures de prise différentes par jour.
 RG-11 — Le système trouve les prises en comparant l'état du plateau avant et après une ouverture. Une case qui passe de pleine à vide correspond à une prise.

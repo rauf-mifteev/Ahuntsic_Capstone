@@ -1,8 +1,8 @@
-# Répétition du scénario complet — PC-71
+# Répétition du scénario complet
 
 Ce document est le déroulé à suivre pour répéter la démonstration **avant**
-la revue (AC de PC-69 : "juger si l'équipe maîtrise son système en cas de
-problème" — ça se prépare, ça ne s'improvise pas). Répétez-le en entier au
+la revue. Le client doit pouvoir juger si l'équipe maîtrise son système en cas
+de problème : ça se prépare, ça ne s'improvise pas. Répétez-le en entier au
 moins une fois, tous ensemble, dans les conditions réelles de la revue
 (même réseau, même téléphone, même ordinateur).
 
@@ -13,7 +13,7 @@ moins une fois, tous ensemble, dans les conditions réelles de la revue
 | # | Vérification | Comment |
 |---|---|---|
 | 1 | L'API répond | `curl https://pilulier-api.onrender.com/api/sante` → doit répondre `{"etat":"ok",...}` en moins de 2-3 secondes. **Render (palier gratuit) met en veille un service inactif** : si ça fait plus de 15 minutes que personne ne l'a appelée, le premier appel peut prendre 30-50 secondes. Faites CET appel curl environ 5 minutes avant de commencer la démo pour "réveiller" le service. |
-| 2 | Le service d'analyse répond | `curl https://pilulier-analyse-images.onrender.com/sante` → même remarque sur la mise en veille. |
+| 2 | Le service d'analyse répond | `curl https://pilulier-analyse-images.onrender.com/sante` → doit répondre `{"etat":"ok","strategie":"mobilenet-onnx"}`. Si la stratégie affichée n'est pas `mobilenet-onnx`, le modèle entraîné ne tourne pas. Même remarque sur la mise en veille. |
 | 3 | MongoDB Atlas est accessible | Depuis le tableau de bord Atlas, vérifiez qu'aucune alerte n'est active et que l'adresse IP autorisée couvre "Allow access from anywhere" (0.0.0.0/0) — sinon Render ne pourra pas se connecter. |
 | 4 | L'application mobile est à jour | `cd mobile && npm install && npm start` sur l'ordinateur qui fera la démo, avec `EXPO_PUBLIC_API_URL` pointant vers l'API déployée (pas `localhost`). |
 | 5 | Expo Go est à jour sur le téléphone de démo | Ouvrez Expo Go, vérifiez qu'aucune mise à jour n'est en attente (voir aussi `CORRECTIF_SDK54.md` si un écart de version SDK réapparaît). |
@@ -95,20 +95,20 @@ que ça a été fait)*
      je l'ai pris" / "Non, pas pris" (RG-06 : la prise ne redevient
      jamais "manquée" toute seule après une confirmation manuelle).
 
-### 2.6 — Rappel local (F9, PC-60/61)
+### 2.6 — Rappel local (F9)
 1. Si l'astuce de la section 2.4 a été utilisée, une notification doit
    apparaître sur le téléphone à l'heure programmée.
 2. Toucher la notification → l'app s'ouvre directement sur l'écran de
-   résultat de cette prise précise (AC de PC-60).
+   résultat de cette prise précise.
 
-### 2.7 — DEL (RG-12, PC-62)
+### 2.7 — DEL (RG-12)
 1. Montrer la DEL du créneau concerné allumée sur le circuit Wokwi tant
    que la prise n'est pas réglée.
 2. Confirmer la prise (dans l'app ou en fermant le couvercle) → la DEL
    s'éteint au plus tard 4 secondes après (fréquence de sondage du
    firmware, voir `wokwi/README.md`).
 
-### 2.8 — Démonstration en direct et panne provoquée (F-démo, PC-69/70)
+### 2.8 — Démonstration en direct et panne provoquée (F-démo)
 *C'est le moment le plus important de la revue — ne pas le bâcler.*
 1. Ouvrir l'écran "Démonstration en direct" depuis le tableau de bord.
 2. Cliquer le bouton Wokwi une ou deux fois → montrer les événements
@@ -140,7 +140,7 @@ que ça a été fait)*
 | Le circuit Wokwi ne se connecte pas au Wi-Fi simulé | Simulateur Wokwi démarré avant que la page soit complètement chargée | Rafraîchir la page wokwi.com et relancer la simulation. |
 | L'événement envoyé par Wokwi renvoie 401 | Le pilulier n'a pas encore été associé à un compte, ou `IDENTIFIANT_DISPOSITIF` (firmware) ne correspond pas à ce qui a été saisi dans l'app | Vérifier les deux valeurs sont identiques, caractère pour caractère. |
 | Aucune notification n'apparaît à l'heure prévue | Permission de notifications refusée sur le téléphone, ou app en arrière-plan depuis longtemps (iOS peut retarder) | Vérifier les réglages de notification du téléphone avant la démo ; préférer Android pour la démo si le problème persiste sur iOS. |
-| Le verdict est toujours "ambigu" ou toujours "confirmé", jamais l'inverse | `MODELE_STRATEGIE=factice` avec un comportement fixe (voir `analyse-images/README.md`) | Pour la démo, régler `MODELE_STRATEGIE=seuillage` sur le service déployé — c'est le vrai classificateur, pas un simulateur, et il réagit vraiment à ce que "voit" la photo envoyée. |
+| Le verdict est toujours "ambigu" ou toujours "confirmé", jamais l'inverse | `MODELE_STRATEGIE=factice` avec un comportement fixe (voir `analyse-images/README.md`) | Pour la démo, régler `MODELE_STRATEGIE=onnx` sur le service déployé — c'est le modèle entraîné, pas un simulateur, et il réagit vraiment à ce que "voit" la photo envoyée. |
 | Chaque vérification affiche « analyse échouée » | L'API ne joint pas le service d'analyse : `SERVICE_ANALYSE_URL` ne se termine pas par `/analyser`, ou le service dormait | Sur Render, dans `pilulier-api` → Environment, vérifier que `SERVICE_ANALYSE_URL` vaut `https://pilulier-analyse-images.onrender.com/analyser`. Réveiller le service (`/sante`) puis refaire une fermeture. |
 | La photo de référence ne semble jamais arriver (écran de remplissage bloqué sur "en attente") | Le couvercle n'a pas été fermé après avoir cliqué "J'ai rempli mon pilulier", ou le circuit est hors ligne | Vérifier l'état du circuit sur l'écran de démonstration avant de relancer l'étape 2.4. |
 

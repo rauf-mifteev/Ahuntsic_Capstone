@@ -1,9 +1,9 @@
-# Décision de conception — la photo du plateau est simulée (PC-51)
+# Décision de conception — la photo du plateau est simulée
 
 Ce document explique pourquoi la vérification par photo, qui est la
 fonctionnalité différenciante du projet, fonctionne aujourd'hui sans
 qu'aucun appareil ne prenne de photo. Il complète
-`docs/A4-dimension-intelligente.md` et `docs/B5-architecture-logicielle.md`,
+[A4 · Dimension intelligente](A4-dimension-intelligente.md) et [B5 · Architecture logicielle](B5-architecture-logicielle.md),
 qui décrivent la chaîne telle qu'elle serait avec un vrai boîtier.
 
 ## Le problème
@@ -16,14 +16,14 @@ Or personne, dans le périmètre de ces deux sprints, ne peut produire cette
 photo :
 
 - Le boîtier physique n'existe pas — c'est une décision assumée dès le
-  départ (`docs/A1-perimetre.md`, section 6).
+  départ ([A1 · Périmètre arrêté](A1-perimetre.md), section 6).
 - Le circuit est simulé sur Wokwi, et un ESP32 simulé n'a pas de caméra.
   Le firmware (`wokwi/src/main.cpp`) n'envoie que
   `{identifiantDispositif, type, horodatage}`.
 - L'application mobile ne prend pas de photo non plus : rien dans les
   écrans du Sprint 2 n'ouvre l'appareil photo.
 
-La première version de PC-51 conditionnait la vérification à la présence
+La première version de cette décision conditionnait la vérification à la présence
 d'une image :
 
 ```js
@@ -71,8 +71,9 @@ vérification simulée avec une vérification issue d'une vraie photo.
 
 ## Ce que ça ne remplace pas
 
-- Le modèle MobileNet n'est toujours pas entraîné sur de vraies photos
-  (PC-48) : la stratégie qui tourne en démonstration est `seuillage`.
+- Le modèle MobileNet n'est toujours pas entraîné sur de vraies photos. La
+  stratégie qui tourne en démonstration, `onnx`, exécute un modèle appris
+  uniquement sur des images dessinées.
 - La qualité de la classification sur de vraies photos reste inconnue. Les
   images dessinées sont plus propres que la réalité (éclairage constant,
   pas de reflets, pas d'ombre portée du rebord).

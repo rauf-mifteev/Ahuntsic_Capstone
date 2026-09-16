@@ -14,7 +14,7 @@ Tests des pannes : score trop bas, service d'analyse qui ne répond pas, perte d
 
 Tests manuels sur un vrai téléphone, iOS et Android, une fois par sprint.
 
-Évaluation du modèle sur des photos réservées, jamais utilisées pour l'entraînement. On compte séparément les deux types d'erreurs. Confirmer une prise qui n'a pas eu lieu est la pire.
+Évaluation du modèle sur des photos réservées, jamais utilisées pour l'entraînement. On compte séparément les deux types d'erreurs. Confirmer une prise qui n'a pas eu lieu est la pire. On mesure aussi la tenue du modèle quand l'éclairage change, parce que sur des images propres le seuillage suffit et ne départage rien : voir [la mesure de robustesse](mesure-robustesse.md).
 
 Outils
 

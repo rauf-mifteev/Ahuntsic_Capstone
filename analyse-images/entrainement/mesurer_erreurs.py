@@ -1,6 +1,6 @@
 """
 Mesure des erreurs d'une stratégie de classification, séparément dans les
-deux sens (PC-48), et choix du seuil de confiance.
+deux sens, et choix du seuil de confiance.
 
 Pourquoi séparer les deux types d'erreur : dans ce projet, une case qui
 passe de pleine à vide CONFIRME une prise (RG-11). Donc :
@@ -15,7 +15,7 @@ passe de pleine à vide CONFIRME une prise (RG-11). Donc :
 `choisir_seuil` balaie donc les seuils du plus permissif au plus strict et
 retient le premier qui ramène le taux de faux positifs sous la limite
 demandée — quitte à augmenter le taux de faux négatifs (plus de doute).
-C'est exactement l'AC de PC-47 : "le seuil de confiance est choisi pour
+C'est exactement le critère d'acceptation : "le seuil de confiance est choisi pour
 préférer le doute à une fausse confirmation".
 """
 import sys

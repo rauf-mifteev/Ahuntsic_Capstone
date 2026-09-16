@@ -127,23 +127,82 @@ prises encore à l'état `PREVUE` quand on change l'heure d'un créneau.
 
 | Adresse | Ce qu'elle fait |
 |---|---|
+| `GET /api/sante` | le point de santé : le service répond-il ? |
 | `POST /api/comptes` | créer un compte |
 | `POST /api/comptes/connexion` | se connecter, reçoit un jeton |
+| `GET /api/comptes/moi` | le compte connecté |
 | `POST /api/dispositifs/associer` | rattacher un pilulier à son compte |
+| `GET /api/dispositifs/moi` | le pilulier du patient et son état |
 | `PUT /api/dispositifs/moi/plages-horaires` | changer les heures des créneaux |
 | `POST /api/dispositifs/moi/confirmer-remplissage` | déclarer le pilulier rempli |
 | `GET/POST/PUT /api/medicaments` | gérer les médicaments |
 | `POST /api/evenements` | **le circuit** envoie ouverture ou fermeture |
-| `GET /api/prises` | les prises et leur état |
+| `GET /api/prises` | les prises du jour et leur état |
+| `GET /api/prises/historique` | l'historique et le taux d'adhérence |
+| `GET /api/prises/:id` | une prise précise |
+| `PUT /api/prises/:id/confirmer` | le patient confirme lui-même |
+| `PUT /api/prises/:id/annuler-confirmation` | il se corrige |
+| `GET /api/verifications/reference` | la dernière photo de référence |
 | `GET /api/circuit/:id/commandes-del` | **le circuit** demande quels voyants allumer |
 | `GET/POST /api/demo/...` | l'écran de démonstration et la panne simulée |
+
+Dix-huit lignes pour 21 routes : trois lignes en regroupent plusieurs.
 
 `POST /api/evenements` accepte **soit un événement seul, soit une liste**.
 C'est ce qui permet au circuit de renvoyer d'un coup tout ce qu'il a gardé en
 mémoire pendant une coupure réseau.
 
+## L'historique et le taux d'adhérence
+
+`GET /api/prises/historique` est la livraison principale de l'étape 2 du
+sprint 3. Elle renvoie les prises d'une période et le taux de régularité du
+patient.
+
+**Ce qu'on lui envoie.** Deux paramètres, tous les deux facultatifs. `jours`
+est un entier entre 1 et 31, qui vaut 7 par défaut. `date` est le dernier jour
+de la période ; sans elle, c'est aujourd'hui.
+
+**Ce qu'elle renvoie.** Un objet avec cinq champs : `debut` et `fin`, les deux
+bornes de la période ; `nombreJours` ; `resume`, le total sur la période ; et
+`parJour`, une ligne par journée.
+
+Le `resume` contient sept nombres : `total`, `confirmees`,
+`confirmeesAutomatiquement`, `confirmeesManuellement`, `manquees`, `enAttente`
+et `tauxAdherence`.
+
+**Comment le taux est calculé.** Confirmées divisées par confirmées plus
+manquées.
+
+Les prises encore prévues, en vérification ou ambiguës sont **exclues du
+dénominateur**. C'est volontaire. Sinon un patient consciencieux verrait son
+taux chuter chaque matin, simplement parce que les prises du soir ne sont pas
+encore arrivées. C'est aussi ce que dit la règle RG-08 du cahier des charges.
+
+**Quand rien n'est encore réglé, `tauxAdherence` vaut `null`, pas zéro.**
+L'application affiche alors un tiret. Une absence de donnée n'est pas un échec.
+
+**`parJour` contient une ligne pour chaque jour de la période**, y compris les
+jours sans aucune prise. Un trou dans un graphique se lit ; une ligne absente
+passe inaperçue.
+
+**Les dates sont calculées dans le fuseau horaire du patient**, pas en temps
+universel. Sinon, un patient de Montréal verrait sa journée changer à 20 h.
+
+**Les erreurs.** `400` si `jours` sort des bornes 1 à 31. `404` si le compte
+n'a aucun pilulier rattaché.
+
+Deux détails de mise en oeuvre qui ne se devinent pas.
+
+La route `/prises/historique` doit être déclarée **avant** `/prises/:id` dans
+`priseRoutes.js`. Sinon Express lit « historique » comme un identifiant de
+prise et renvoie 404.
+
+Les dates sont des chaînes au format « AAAA-MM-JJ ». Leur ordre alphabétique
+est aussi leur ordre chronologique. C'est ce qui permet au dépôt de les
+comparer directement, sans les convertir.
+
 ## Les tests
 
-174 tests automatisés. Ils n'utilisent **aucune vraie base de données** : les
+189 tests automatisés. Ils n'utilisent **aucune vraie base de données** : les
 dépôts sont remplacés par des doublures. C'est pour ça qu'ils tournent en
 quelques secondes et qu'on peut les lancer sans rien configurer.

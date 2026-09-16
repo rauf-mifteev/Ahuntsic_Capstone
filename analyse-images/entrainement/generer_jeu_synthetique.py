@@ -1,9 +1,9 @@
 """
-Génère le jeu d'images SYNTHÉTIQUES du plateau (PC-46).
+Génère le jeu d'images SYNTHÉTIQUES du plateau.
 
 Ce n'est pas un échafaudage : le projet ne prend aucune vraie photo (voir
 docs/photos-simulees.md), donc ce script produit LE jeu de données
-du projet — celui qui sert à l'entraînement (PC-48), à la mesure des
+du projet — celui qui sert à l'entraînement, à la mesure des
 erreurs et aux tests automatisés.
 
 Avantage secondaire, mais réel : les étiquettes sont exactes par
@@ -76,9 +76,9 @@ def generer_jeu(dossier_jeu_de_photos: Path, nombre_images: int = NOMBRE_IMAGES_
     """
     Génère `nombre_images` plateaux avec un mélange aléatoire (mais
     reproductible) de cases pleines/vides, et les répartit entre
-    entrainement/ et test/ (80 % / 20 %, jamais mélangés — voir l'AC de
-    PC-45 : « une partie des photos est mise de côté et jamais utilisée
-    pour l'entraînement »).
+    entrainement/ et test/ (80 % / 20 %, jamais mélangés). Le critère
+    d'acceptation demande qu'« une partie des photos soit mise de côté et
+    jamais utilisée pour l'entraînement ».
     """
     dossier_jeu_de_photos = Path(dossier_jeu_de_photos)
     nb_test = max(1, round(nombre_images * 0.2))

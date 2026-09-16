@@ -50,17 +50,8 @@ DOSSIER_JEU_SYNTHETIQUE = RACINE / "jeu-de-photos-synthetique"
 
 TAILLE_ENTREE = 64
 VERSION_OPSET = 17
-# PyTorch et ONNX Runtime n'ordonnent pas les convolutions de la même façon.
-# Sur une cinquantaine de couches en float32, une erreur relative de l'ordre
-# de 1e-5 est attendue : sur des logits qui atteignent 10, elle vaut déjà
-# 1e-4 en valeur absolue. D'où le seuil à 1e-3. Ce n'est pas ce contrôle qui
-# protège des vraies erreurs — un défaut de prétraitement donne un écart de
-# l'ordre de 1e-1 — c'est le nombre de décisions différentes, qui doit rester
-# à zéro.
 ECART_MAXIMAL_TOLERE = 1e-3
 
-# La même transformation que strategies/mobilenet.py : c'est la référence
-# à laquelle le prétraitement numpy de strategies/onnx.py doit correspondre.
 TRANSFORMATION = transforms.Compose(
     [
         transforms.Resize((TAILLE_ENTREE, TAILLE_ENTREE)),
@@ -98,9 +89,6 @@ def exporter(modele):
     )
 
     try:
-        # Les versions récentes de torch proposent un second exportateur ;
-        # on reste sur celui d'origine, qui suffit ici et demande moins de
-        # dépendances.
         torch.onnx.export(modele, entree_factice, str(CHEMIN_MODELE_ONNX), dynamo=False, **arguments)
     except TypeError:
         torch.onnx.export(modele, entree_factice, str(CHEMIN_MODELE_ONNX), **arguments)
@@ -158,7 +146,6 @@ def verifier_parite(modele):
         ecart_maximal = max(ecart_maximal, float(np.abs(sorties_torch - sorties_onnx).max()))
         amplitude_maximale = max(amplitude_maximale, float(np.abs(sorties_torch).max()))
 
-        # La décision est « la case est-elle vide ? », donc la classe gagnante.
         decisions_torch = sorties_torch.argmax(axis=1)
         decisions_onnx = np.asarray(sorties_onnx).argmax(axis=1)
         decisions_differentes += int((decisions_torch != decisions_onnx).sum())

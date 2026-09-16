@@ -1,5 +1,5 @@
 """
-Entraîne le vrai modèle de classification (PC-48) : MobileNetV3-Small
+Entraîne le vrai modèle de classification : MobileNetV3-Small
 pré-entraîné sur ImageNet, dont on réentraîne seulement les dernières
 couches (voir docs/B7-choix-technologiques.md pour la justification de ce
 choix — 2,5 millions de paramètres, tourne sans carte graphique).

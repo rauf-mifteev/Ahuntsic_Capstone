@@ -30,10 +30,10 @@ elle changeait quelque part, plus rien ne correspondrait.
 Une seule photo du plateau entier donne donc **28 exemples étiquetés d'un
 coup**. C'est ce qui rend l'entraînement possible avec peu d'images.
 
-## Les trois façons de reconnaître une case
+## Les quatre façons de reconnaître une case
 
 Le fichier `interface_classifieur.py` définit un contrat : « voici une image,
-rends-moi 28 résultats ». Trois programmes différents respectent ce contrat,
+rends-moi 28 résultats ». Quatre programmes différents respectent ce contrat,
 et on choisit lequel tourne avec une variable d'environnement appelée
 `MODELE_STRATEGIE`.
 
@@ -43,15 +43,24 @@ prévisible. Sert à développer l'API sans dépendre du reste.
 **`seuillage`** — la méthode simple et robuste. Elle transforme chaque zone
 en noir et blanc et compte les pixels sombres. Beaucoup de sombre = il y a un
 comprimé. Pas d'entraînement nécessaire, ça marche dès le premier jour.
-**C'est celle à utiliser pour la démonstration.**
+**C'est la solution de secours du projet.**
 
 **`mobilenet`** — un vrai réseau de neurones pré-entraîné (MobileNetV3-Small),
 dont on ne réapprend que la dernière couche. Plus savant, mais il faut
-l'entraîner d'abord.
+l'entraîner d'abord. Il a besoin de PyTorch, une bibliothèque de 500 Mo, donc
+il ne tourne qu'en local.
+
+**`onnx`** — le même modèle entraîné que `mobilenet`, mais exécuté par un
+moteur léger. ONNX est un format de fichier qui permet de faire tourner un
+modèle sans installer PyTorch. Le moteur qui le lit, ONNX Runtime, pèse
+environ 16 Mo au lieu de 500. Il lit le fichier
+`entrainement/modele_mobilenet.onnx`, versionné dans le dépôt.
+**C'est la stratégie du service déployé, et celle à utiliser pour la
+démonstration.**
 
 Cette façon de faire porte un nom : le **patron Stratégie**. Un contrat,
 plusieurs implémentations interchangeables. C'est documenté dans
-`B6-patrons-conception.md`.
+[B6 · Patrons de conception](B6-patrons-conception.md).
 
 ## Le plateau simulé — la source des photos
 
@@ -130,9 +139,10 @@ l'entraînement. C'est indispensable : tester un modèle sur ce qu'il a déjà v
 ne mesure rien.
 
 `entrainement/entrainer_mobilenet.py` fait l'apprentissage.
-`entrainement/mesurer_erreurs.py` mesure la qualité — et il mesure la
-stratégie `seuillage`, pas le modèle entraîné ; il l'affiche en première
-ligne pour éviter la confusion.
+`entrainement/mesurer_erreurs.py` mesure la qualité. Par défaut il mesure la
+stratégie `seuillage`. L'option `--strategie onnx` mesure le modèle entraîné.
+Le nom de la stratégie mesurée s'affiche en première ligne, pour éviter la
+confusion.
 
 **Un chiffre à ne pas citer sans précaution** : le score obtenu tourne autour
 de 100 %. Il est trompeur. Les images de test viennent du même générateur que

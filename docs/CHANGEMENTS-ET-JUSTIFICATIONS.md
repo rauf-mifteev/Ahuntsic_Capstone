@@ -251,6 +251,32 @@ la PR #20 :
 
 ---
 
+## La règle RG-08 a été réécrite pour correspondre au code
+
+Le cahier des charges définissait le taux d'adhérence ainsi :
+
+> RG-08 — Le taux d'adhérence est le nombre de prises confirmées divisé par le
+> nombre de prises prévues. Une prise ambiguë non réglée compte comme non
+> confirmée.
+
+Le code livré à l'étape 2 du sprint 3 fait autre chose. Dans
+`api/src/services/adherenceService.js`, le dénominateur est le nombre de prises
+confirmées plus manquées. Les prises encore prévues, en vérification ou
+ambiguës sont exclues du calcul.
+
+C'est le code qui a raison, et il est testé. Une prise dont l'heure n'est pas
+encore passée ne doit pas compter contre le patient : sinon son taux chuterait
+chaque matin, simplement parce que les prises du soir ne sont pas encore
+arrivées.
+
+La règle a donc été réécrite pour dire ce que le code fait :
+
+> RG-08 — Le taux d'adhérence est le nombre de prises confirmées divisé par le
+> nombre de prises réglées, c'est-à-dire confirmées ou manquées. Une prise
+> encore prévue, en vérification ou ambiguë n'entre pas dans le calcul.
+
+---
+
 ## État des tests
 
 | Suite | Avant | Après |
@@ -266,17 +292,17 @@ modifiée, pour refléter un changement de format décidé volontairement
 
 ## Écarts entre l'engagé et le livré
 
-Relevé au 11 septembre, à la fin du sprint 2.
+Relevé au 15 septembre 2026, pendant le sprint 3.
 
 | Sujet | État | Suite prévue |
 |---|---|---|
 | Déploiement des deux services | fait le 10 septembre : `pilulier-api` et `pilulier-analyse-images` répondent en ligne | rien à faire |
 | Choix de la version du sprint 2 | réglé : le découpage en six étapes (E1 à E6) a été retenu, fusionné dans `main` par les PR #15 à #20 | rien à faire |
 | Diagrammes touchés par l'objet intelligent | refaits : classes, architecture, et les séquences de configuration, de remplissage et de prise normale | rien à faire |
-| Répétition chronométrée à trois | **pas faite** | à tenir avant la revue ; suivie par la sous-tâche PC-110 |
-| Modèle MobileNet entraîné | **pas déployé** : il réclame PyTorch, trop lourd pour le palier gratuit | le seuillage OpenCV tient lieu de stratégie en service ; le modèle reste mesurable hors ligne avec `analyse-images/entrainement/mesurer_erreurs.py` |
-| Déclaration des outils d'IA générative | **pas écrite** : le champ de `D5-plan-documentation.md` est resté vide | à remplir par l'équipe, chacun pour sa part |
-| Retour du client après raffinement | **pas écrit** : le champ de `A2-analyse-des-besoins.md` est resté vide | à remplir après la prochaine séance |
+| Répétition chronométrée à trois | la sous-tâche PC-110 est marquée Terminé dans Jira | la répétition générale devant l'enseignant est fixée au 17 septembre |
+| Modèle MobileNet entraîné | **déployé depuis l'étape 1 du sprint 3** : exporté au format ONNX et exécuté par ONNX Runtime, qui pèse environ 16 Mo au lieu des 500 Mo de PyTorch | rien à faire ; le seuillage reste la solution de secours |
+| Déclaration des outils d'IA générative | **pas écrite** : le champ de [D5 · Plan de documentation](D5-plan-documentation.md) est resté vide | à remplir par l'équipe, chacun pour sa part |
+| Retour du client après raffinement | **pas écrit** : le champ de [A2 · Analyse des besoins](A2-analyse-des-besoins.md) est resté vide | à remplir après la prochaine séance |
 
-Les trois derniers points demandent des faits que seule l'équipe détient. Ils
+Les deux derniers points demandent des faits que seule l'équipe détient. Ils
 sont relevés ici pour qu'ils ne se perdent pas d'ici la revue.

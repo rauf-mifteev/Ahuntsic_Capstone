@@ -30,6 +30,7 @@ Un fichier par livrable. Le nom du fichier commence par le code du livrable.
 
 - **C1** — [Carnet de produit](C1-carnet-produit.md)
 - **C2** — [Planification du sprint 1](C2-sprint-1.md)
+- **C3** — [Planification des sprints 2 et 3](C3-sprints-2-et-3.md)
 
 ## D — Conventions de l'équipe
 
@@ -50,8 +51,16 @@ Un fichier par livrable. Le nom du fichier commence par le code du livrable.
 Décisions et procédures produites pendant les sprints, en complément des
 livrables A à E.
 
-- **PC-51** — [Pourquoi la photo du plateau est simulée](photos-simulees.md)
-- **PC-71** — [Répétition de la démonstration](PC-71-repetition-demo.md)
+- [Pourquoi la photo du plateau est simulée](photos-simulees.md)
+- [Répétition de la démonstration](repetition-demonstration.md)
+- [Est-ce que le modèle entraîné sert vraiment à quelque chose ?](mesure-robustesse.md)
+
+## Pour les utilisateurs
+
+Un seul document, écrit pour la personne qui se sert du pilulier. Aucun
+vocabulaire technique.
+
+- [Manuel d'utilisation](MANUEL-UTILISATEUR.md)
 
 ## G — Comment ça marche
 
@@ -66,4 +75,5 @@ Documents écrits pour quelqu'un qui découvre le projet.
 ## H — Installation et suivi
 
 - [Installer et faire tourner le projet](INSTALLATION-EQUIPE.md)
+- [Déployer le projet](DEPLOIEMENT.md)
 - [Ce qui a changé, et pourquoi](CHANGEMENTS-ET-JUSTIFICATIONS.md)

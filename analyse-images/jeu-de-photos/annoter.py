@@ -1,5 +1,5 @@
 """
-Outil d'annotation en ligne de commande (PC-46).
+Outil d'annotation en ligne de commande.
 
 Découpe une photo du plateau en 28 zones, les enregistre dans un dossier
 temporaire pour que vous puissiez les regarder une à une avec votre

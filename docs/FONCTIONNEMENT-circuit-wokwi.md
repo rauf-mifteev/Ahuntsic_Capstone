@@ -11,7 +11,7 @@ le navigateur. Mais **le programme est réel** et **les requêtes réseau sont
 réelles** : le circuit simulé se connecte vraiment à Internet et appelle
 vraiment notre API.
 
-Ce choix est assumé et documenté dans `A1-perimetre.md` : construire le
+Ce choix est assumé et documenté dans [A1 · Périmètre arrêté](A1-perimetre.md) : construire le
 boîtier n'était pas dans le périmètre du projet.
 
 ## Ce qu'il y a sur la carte

@@ -27,8 +27,6 @@ const priseRepository = {
   },
 
   async listerParPeriodePourDispositif(dispositifId, dateDebut, dateFin) {
-    // Les dates sont des chaînes « AAAA-MM-JJ » : leur ordre alphabétique est
-    // leur ordre chronologique, donc une comparaison de chaînes suffit.
     return Prise.find({
       dispositif: dispositifId,
       date: { $gte: dateDebut, $lte: dateFin },

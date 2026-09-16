@@ -3,10 +3,10 @@ Stratégie FACTICE (patron Stratégie, voir docs/B6-patrons-conception.md).
 
 But : permettre à l'équipe de développer et de tester l'API Node.js
 (intégration, gestion des cas ambigus, écrans mobiles) AVANT que le vrai
-modèle existe (AC de PC-47). Ne regarde jamais réellement l'image.
+modèle existe. Ne regarde jamais réellement l'image.
 
 Comportement configurable par variable d'environnement, pratique pour
-tester les trois cas de l'écran de résultat (PC-55 : confirmée / ambiguë
+tester les trois cas de l'écran de résultat (confirmée / ambiguë
 / case encore pleine) sans dépendre d'une vraie photo :
 
     MODELE_FACTICE_RESULTAT=vide       -> toutes les zones "vides" (score haut)

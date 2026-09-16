@@ -5,8 +5,16 @@ bien sorti de sa case, au lieu de seulement détecter l'ouverture du couvercle
 (ce que font tous les piluliers connectés existants).
 
 > Le boîtier physique est **simulé** pendant tout le projet (circuit ESP32 sur
-> Wokwi + téléphone en guise de caméra/éclairage). Voir `docs/A1-perimetre.md`
-> dans le dossier de documentation du projet pour le détail de ce choix.
+> Wokwi + téléphone en guise de caméra/éclairage). Voir
+> [A1 · Périmètre arrêté](docs/A1-perimetre.md) pour le détail de ce choix.
+
+## Par où commencer
+
+| Vous êtes | Lisez |
+|---|---|
+| un utilisateur du pilulier | [le manuel d'utilisation](docs/MANUEL-UTILISATEUR.md) |
+| un correcteur ou un relecteur | [l'index de la documentation](docs/README.md) |
+| quelqu'un qui découvre le code | [la vue d'ensemble](docs/FONCTIONNEMENT-vue-ensemble.md) |
 
 ## Équipe
 
@@ -74,12 +82,12 @@ python -m venv .venv
 .venv\Scripts\Activate.ps1   # sous Windows ; sinon source .venv/bin/activate
 pip install -r requirements.txt -r requirements-dev.txt
 uvicorn app:app --reload --port 5001
-python -m pytest tests/ -q    # 45 tests
+python -m pytest tests/ -q    # 50 tests
 ```
 
 Le contrat HTTP est publié sur `http://localhost:5001/docs`. La stratégie de
 classification est choisie au démarrage par `MODELE_STRATEGIE` : `factice`,
-`seuillage` ou `mobilenet`. Voir `analyse-images/README.md`.
+`seuillage`, `mobilenet` ou `onnx`. Le service déployé utilise `onnx`. Voir `analyse-images/README.md`.
 
 ### Application mobile
 
@@ -101,6 +109,8 @@ configuration de l'URL de l'API et du mot de passe Wi-Fi simulé.
 
 Les deux services sont déployés sur **Render** depuis la branche `main`. Le
 fichier `render.yaml`, à la racine, les décrit tous les deux et fait référence.
+La marche à suivre complète, depuis un dépôt neuf, est dans
+[Déployer le projet](docs/DEPLOIEMENT.md).
 
 | Service | Adresse |
 |---|---|
@@ -110,7 +120,7 @@ fichier `render.yaml`, à la racine, les décrit tous les deux et fait référen
 MongoDB Atlas héberge la base de données. Le palier gratuit met en veille un
 service inactif : le premier appel après quinze minutes peut prendre une
 trentaine de secondes. Les vérifications à faire avant une démonstration sont
-dans `docs/PC-71-repetition-demo.md`.
+dans [la fiche de répétition de la démonstration](docs/repetition-demonstration.md).
 
 ## Intégration continue
 
@@ -126,6 +136,7 @@ n'exécute que ce qui est utile.
 | `ci-e4-wokwi.yml` | compilation du firmware | `wokwi/**` |
 | `ci-e5-deploiement.yml` | cohérence du déploiement | `render.yaml`, `.github/workflows/**` |
 | `ci-e6-documentation.yml` | liens entre les documents | `**/*.md` |
+| `ci-s3-e1-modele-onnx.yml` | le modèle ONNX est versionné, aucun `.pt` ne l'est, et le modèle tourne sans PyTorch | `analyse-images/**` |
 
 Une pull request ne peut pas être fusionnée dans `main` si un contrôle échoue
 (voir la section « Réglages GitHub » ci-dessous).
@@ -141,12 +152,19 @@ Une pull request ne peut pas être fusionnée dans `main` si un contrôle échou
 
 ## Documentation
 
-Le dossier `docs/` (au sens du plan de documentation, section D5) contient tous
-les livrables du projet, cadrage et diagrammes compris. Commencer par
-`docs/README.md`, qui les indexe, puis `docs/FONCTIONNEMENT-vue-ensemble.md`
-pour comprendre comment les morceaux s'assemblent.
+**Vous utilisez le pilulier ?** Lisez le
+[manuel d'utilisation](docs/MANUEL-UTILISATEUR.md). Il est écrit pour le
+patient, pas pour les développeurs, et ne demande aucune connaissance
+technique.
+
+Le dossier `docs/` contient tous les livrables du projet, cadrage et
+diagrammes compris. Commencer par [l'index de la documentation](docs/README.md),
+qui les liste, puis par
+[la vue d'ensemble](docs/FONCTIONNEMENT-vue-ensemble.md) pour comprendre
+comment les morceaux s'assemblent. Le plan de documentation est en
+[D5](docs/D5-plan-documentation.md).
 
 ## Outils d'IA utilisés
 
-Voir `docs/D5-plan-documentation.md` pour la déclaration des outils d'IA
+Voir [D5 · Plan de documentation](docs/D5-plan-documentation.md) pour la déclaration des outils d'IA
 générative utilisés par l'équipe.

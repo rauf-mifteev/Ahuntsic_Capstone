@@ -47,7 +47,7 @@ est gardé et rattaché automatiquement à chaque appel suivant.
 **Créneaux** — les heures des quatre moments de la journée. Les changer
 replanifie les prises à venir.
 
-**Médicaments** — ajouter, modifier, supprimer. Un médicament peut maintenant
+**Médicaments** — ajouter, modifier. Un médicament peut maintenant
 être dans **plusieurs créneaux** : « Metformine, matin et soir » est possible.
 
 **Remplissage** — le bouton « J'ai rempli mon pilulier ». Il prépare la
@@ -58,8 +58,39 @@ de départ aux comparaisons. Sans ce geste, aucune prise ne se confirme.
 ambiguë, ou case encore pleine. En cas de doute, le patient confirme
 lui-même.
 
+**Historique** — livré à l'étape 3 du sprint 3. Le patient choisit une période
+de 7, 14 ou 30 jours. L'écran affiche son taux d'adhérence en gros, puis trois
+compteurs : confirmées, manquées, en attente. En dessous, une ligne par jour
+avec son propre taux. Toucher une journée l'ouvre et montre le détail de ses
+prises. Quand aucune prise n'est encore réglée, le taux affiche un tiret et
+non 0 %.
+
+**Mon dispositif** — l'état du pilulier rattaché au compte : son identifiant,
+s'il est connecté ou hors ligne, et la date du dernier contact. Quand aucun
+pilulier n'est associé, l'écran propose un champ pour saisir l'identifiant et
+le rattacher.
+
 **Démonstration** — un écran de contrôle pour la revue : voir l'état du
 circuit et **provoquer une panne réseau** volontairement.
+
+## Le tableau de bord se rafraîchit tout seul
+
+Livré à l'étape 3 du sprint 3. Avant, l'écran ne se rechargeait qu'au moment
+où on revenait dessus. Une fermeture de couvercle analysée pendant qu'on
+regardait l'écran laissait donc l'ancien statut affiché.
+
+Trois choses le corrigent.
+
+L'écran **interroge l'API toutes les dix secondes** tant qu'il est affiché.
+Le sondage **s'arrête dès qu'on le quitte** : pas de requêtes inutiles quand
+le patient est ailleurs dans l'application.
+
+Le geste **tirer pour rafraîchir** permet de forcer une mise à jour tout de
+suite.
+
+Les trois chemins — l'arrivée sur l'écran, le sondage et le geste manuel —
+appellent **la même fonction de chargement**. Une seule façon de lire les
+données, donc un seul endroit à corriger.
 
 ## Les rappels
 

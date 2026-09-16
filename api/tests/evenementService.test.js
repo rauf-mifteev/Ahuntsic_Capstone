@@ -32,7 +32,7 @@ describe('evenementService.enregistrerEvenement', () => {
     expect(evenementRepository.creer).not.toHaveBeenCalled();
   });
 
-  it('refuse (503) un dispositif en mode démo déconnecté (PC-70)', async () => {
+  it('refuse (503) un dispositif en mode démo déconnecté', async () => {
     dispositifRepository.trouverParIdentifiant.mockResolvedValue(
       faireDispositif({ modeDemoDeconnecte: true })
     );
@@ -113,7 +113,7 @@ describe('evenementService.enregistrerEvenement', () => {
     );
   });
 
-  it("une FERMETURE sans image fait photographier le plateau simulé (PC-51)", async () => {
+  it("une FERMETURE sans image fait photographier le plateau simulé", async () => {
 
     const dispositif = faireDispositif();
     dispositifRepository.trouverParIdentifiant.mockResolvedValue(dispositif);
@@ -228,7 +228,7 @@ describe('evenementService.enregistrerEvenement', () => {
     expect(dispositif.prochaineFermetureEstReference).toBe(false);
   });
 
-  it("si le service d'analyse ne répond pas, la fermeture reste enregistrée sans vérification (AC de PC-50)", async () => {
+  it("si le service d'analyse ne répond pas, la fermeture reste enregistrée sans vérification", async () => {
     const dispositif = faireDispositif();
     dispositifRepository.trouverParIdentifiant.mockResolvedValue(dispositif);
     dispositifRepository.sauvegarder.mockResolvedValue(dispositif);
@@ -250,7 +250,7 @@ describe('evenementService.enregistrerEvenement', () => {
     expect(verificationCreee.analyseEchouee).toBe(true);
   });
 
-  it("conserve l'image dessinée par le service d'analyse (PC-52)", async () => {
+  it("conserve l'image dessinée par le service d'analyse", async () => {
 
     const dispositif = faireDispositif();
     dispositifRepository.trouverParIdentifiant.mockResolvedValue(dispositif);
@@ -276,7 +276,7 @@ describe('evenementService.enregistrerEvenement', () => {
     expect(verificationCreee.image).toBe('iVBORw0KGgo-PNG-base64');
   });
 
-  it("n'écrase pas l'image fournie par l'appelant (PC-52)", async () => {
+  it("n'écrase pas l'image fournie par l'appelant", async () => {
     const dispositif = faireDispositif();
     dispositifRepository.trouverParIdentifiant.mockResolvedValue(dispositif);
     dispositifRepository.sauvegarder.mockResolvedValue(dispositif);

@@ -1,8 +1,8 @@
 """
-Service FastAPI d'analyse d'images (PC-49, étendu en PC-51) — voir
+Service FastAPI d'analyse d'images — voir
 docs/B5-architecture-logicielle.md, composant « API d'inférence »
 (`ServAPI`). Reçoit une image du plateau et renvoie un résultat pour
-chacune des 28 zones, avec un score (AC de PC-47).
+chacune des 28 zones, avec un score.
 
 --------------------------------------------------------------------------
 Contrat HTTP
@@ -10,7 +10,7 @@ Contrat HTTP
 
     POST /analyser
       (a) multipart/form-data, champ « image » = fichier JPEG/PNG
-      (b) application/json, {"dispositifId": "..."}      <- ajouté en PC-51
+      (b) application/json, {"dispositifId": "..."}      <- forme ajoutée ensuite
 
       -> 200
       {
@@ -25,7 +25,7 @@ Contrat HTTP
       service a dessiné la photo lui-même (forme (b), simule=true).
       Quand l'appelant fournit la photo (forme (a)), il l'a déjà : la lui
       retourner doublerait la réponse pour rien. Conservée côté API dans
-      Verification.image, puis purgée après 30 jours (PC-52).
+      Verification.image, puis purgée après 30 jours.
 
       -> 400 si ni image ni dispositifId, ou fichier illisible
 
@@ -102,7 +102,7 @@ class ReponseAnalyse(BaseModel):
     simule: bool = Field(..., description="true si l'image a été dessinée par le service")
     image: str | None = Field(
         None,
-        description="PNG encodé en base64 — présent seulement si simule=true (PC-52)",
+        description="PNG encodé en base64 — présent seulement si simule=true",
     )
     resultats: list[ResultatZoneSortie]
 

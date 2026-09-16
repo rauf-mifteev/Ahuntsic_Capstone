@@ -116,8 +116,8 @@ expliquer une décision longtemps après, sans garder d'images du domicile.
 
 ## Pour aller plus loin
 
-- `FONCTIONNEMENT-service-analyse.md` — l'œil du système
-- `FONCTIONNEMENT-api.md` — le cerveau
-- `FONCTIONNEMENT-mobile.md` — l'application
-- `FONCTIONNEMENT-circuit-wokwi.md` — le circuit
+- [Le service d'analyse d'images](FONCTIONNEMENT-service-analyse.md) — l'œil du système
+- [L'API](FONCTIONNEMENT-api.md) — le cerveau
+- [L'application mobile](FONCTIONNEMENT-mobile.md) — l'application
+- [Le circuit simulé](FONCTIONNEMENT-circuit-wokwi.md) — le circuit
 - `INSTALLATION-EQUIPE.md` — comment tout faire tourner chez soi
